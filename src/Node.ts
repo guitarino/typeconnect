@@ -8,17 +8,14 @@ import { Computed as IComputed } from "./Computed.types";
 import { Node as INode } from "./Node.types";
 
 export class Node implements INode {
+    public value: any;
+    public derivedNodes: IComputed[] = [];
+    public updateFlag: number = NodeUpdateFlag.NotUpdated;
     protected nodesCollector: INodesCollector;
 
     constructor(nodesCollector: INodesCollector) {
         this.nodesCollector = nodesCollector;
     }
-
-    public derivedNodes: IComputed[] = [];
-
-    public updateFlag: number = NodeUpdateFlag.NotUpdated;
-
-    public value: any;
 
     public getValue() {
         this.nodesCollector.collect(this);

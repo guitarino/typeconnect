@@ -5,15 +5,14 @@ import { NodeUpdateFlag } from "./NodeUpdateFlag";
 import { Node } from "./Node";
 
 export class Computed extends Node implements IComputed {
+    public calculateValue: () => any;
+    public dependencies: INode[] = [];
+
     constructor(nodesCollector: INodesCollector, calculateValue: () => any) {
         super(nodesCollector);
         this.calculateValue = calculateValue;
         this.recalculateValueAndUpdate();
     }
-
-    public calculateValue: () => any;
-
-    public dependencies: INode[] = [];
 
     private isAtLeastOneDependencyChanged() {
         for (let i = 0; i < this.dependencies.length; i++) {
