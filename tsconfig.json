@@ -1,0 +1,22 @@
+{
+	"compilerOptions": {
+		"target": "esnext",
+		"experimentalDecorators": true,
+		"moduleResolution": "node",
+		"allowJs": true,
+		"noEmit": true,
+		"strict": true,
+		"isolatedModules": true,
+		"esModuleInterop": true,
+		"noImplicitAny": false,
+		"skipLibCheck": true,
+		"types": [
+			"node",
+			"mocha"
+		]
+	},
+	"include": [
+		"src",
+		"test"
+	]
+}

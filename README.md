@@ -1,2 +1,2 @@
 # typeconnect
-Connecting data and organizing communication between modules
+Connecting data and organizing module communication
