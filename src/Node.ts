@@ -3,18 +3,18 @@ import { recalculateAndUpdatedNodeValuesIfNeeded } from "./utils/recalculateAndU
 import { getDerivedChildrenForNodes } from "./utils/getDerivedChildrenForNodes";
 import { insertAndGetNewNodes } from "./utils/insertAndGetNewNodes";
 import { NodeUpdateFlag } from "./NodeUpdateFlag";
-import { NodesCollector } from "./NodesCollector";
-import { Computed } from "./Computed.types";
-import { Node } from "./Node.types";
+import { NodesCollector as INodesCollector } from "./NodesCollector.types";
+import { Computed as IComputed } from "./Computed.types";
+import { Node as INode } from "./Node.types";
 
-export class NodeClass implements Node {
-    protected nodesCollector: NodesCollector;
+export class Node implements INode {
+    protected nodesCollector: INodesCollector;
 
-    constructor(nodesCollector: NodesCollector) {
+    constructor(nodesCollector: INodesCollector) {
         this.nodesCollector = nodesCollector;
     }
 
-    public derivedNodes: Computed[] = [];
+    public derivedNodes: IComputed[] = [];
 
     public updateFlag: number = NodeUpdateFlag.NotUpdated;
 
@@ -41,8 +41,8 @@ export class NodeClass implements Node {
     }
 
     private getDerivedDescendents() {
-        let parents: Node[] = [this];
-        const derivedDescendents: Computed[] = [];
+        let parents: INode[] = [this];
+        const derivedDescendents: IComputed[] = [];
         while (parents.length) {
             const derivedChildren = getDerivedChildrenForNodes(parents);
             parents = insertAndGetNewNodes(derivedDescendents, derivedChildren);

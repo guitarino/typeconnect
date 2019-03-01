@@ -1,11 +1,11 @@
-import { NodesCollector } from "./NodesCollector";
-import { Node } from "./Node.types";
-import { Computed } from "./Computed.types";
+import { NodesCollector as INodesCollector } from "./NodesCollector.types";
+import { Node as INode } from "./Node.types";
+import { Computed as IComputed } from "./Computed.types";
 import { NodeUpdateFlag } from "./NodeUpdateFlag";
-import { NodeClass } from "./Node";
+import { Node } from "./Node";
 
-export class ComputedClass extends NodeClass implements Computed {
-    constructor(nodesCollector: NodesCollector, calculateValue: () => any) {
+export class Computed extends Node implements IComputed {
+    constructor(nodesCollector: INodesCollector, calculateValue: () => any) {
         super(nodesCollector);
         this.calculateValue = calculateValue;
         this.recalculateValueAndUpdate();
@@ -13,7 +13,7 @@ export class ComputedClass extends NodeClass implements Computed {
 
     public calculateValue: () => any;
 
-    public dependencies: Node[] = [];
+    public dependencies: INode[] = [];
 
     private isAtLeastOneDependencyChanged() {
         for (let i = 0; i < this.dependencies.length; i++) {

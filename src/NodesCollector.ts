@@ -1,26 +1,16 @@
 import { lastArrayItem } from "./utils/lastArrayItem";
-import { Node } from "./Node.types";
+import { Node as INode } from "./Node.types";
+import { NodesCollector as INodesCollector } from "./NodesCollector.types";
 
-export class NodesCollector {
-    static instance: NodesCollector;
-
-    static get() {
-        if (NodesCollector.instance) {
-            return NodesCollector.instance;
-        }
-        else {
-            return new NodesCollector();
-        }
-    }
-
-    collectedStack: Array<Array<Node>> = [];
+export class NodesCollector implements INodesCollector {
+    private collectedStack: INode[][] = [];
 
     start() {
         const collectedNodes = [];
         this.collectedStack.push(collectedNodes);
     }
 
-    collect(node: Node) {
+    collect(node: INode) {
         if (!this.collectedStack.length) {
             return;
         }
