@@ -3,6 +3,17 @@ import { Node as INode } from "./Node.types";
 import { NodesCollector as INodesCollector } from "./NodesCollector.types";
 
 export class NodesCollector implements INodesCollector {
+    static instance: INodesCollector;
+
+    static get() {
+        if (NodesCollector.instance) {
+            return NodesCollector.instance;
+        }
+        else {
+            return new NodesCollector();
+        }
+    }
+
     private collectedStack: INode[][] = [];
 
     start() {

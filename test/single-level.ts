@@ -1,8 +1,7 @@
-import { computed, observed, connect } from "./shared/decorators";
+import { computed, observed } from "./shared/decorators";
 import { SinonSpy, fake } from "sinon";
 import expect from "expect.js";
 
-@connect
 class A {
     @observed
     public a: number = 1;
@@ -12,18 +11,17 @@ class A {
 
     @computed
     public get c(): number {
-        this.cCall();
+        // this.cCall();
         return this.a + this.b;
     }
 
-    public cCall: SinonSpy<any[], any>;
+    // public cCall: SinonSpy<any[], any>;
 
     constructor() {
-        this.cCall = fake();
+        // this.cCall = fake();
     }
 }
 
-@connect
 class B {
     private a: A;
 
@@ -32,14 +30,14 @@ class B {
 
     @computed
     public get d(): number {
-        this.dCall();
+        // this.dCall();
         return this.a.a + this.b;
     }
 
-    public dCall: SinonSpy<any[], any>;
+    // public dCall: SinonSpy<any[], any>;
 
     constructor(a: A) {
-        this.dCall = fake();
+        // this.dCall = fake();
         this.a = a;
     }
 }
@@ -48,6 +46,7 @@ describe(`Single level dependency`, () => {
     describe(`A.a, A.b, A.c(A.a, A.b)`, () => {
         console.log('a is created next');
         const a = new A();
+        console.log(a);
         console.log('a is created');
 
         it(`"A.c" should have already been called`, () => {
