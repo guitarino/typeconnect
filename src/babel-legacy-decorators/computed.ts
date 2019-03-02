@@ -21,4 +21,5 @@ export function computed(
             return new Computed(NodesCollector.get(), getter.bind(targetInstance));
         }
     ));
+    return descriptor;
 }

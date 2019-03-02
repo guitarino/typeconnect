@@ -22,4 +22,5 @@ export function observed(
         descriptor.configurable,
         createAndGetObservedNode
     ));
+    return descriptor;
 }

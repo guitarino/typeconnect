@@ -46,7 +46,7 @@ class A {
     }
 }
 
-describe(`Deep level dependency order`, () => {
+describe(`Deep level dependency correct order`, () => {
     const a = new A();
 
     it(`All "computed" getters are called once before manipulating values`, () => {
