@@ -5,10 +5,10 @@ export function insertAndGetNewNodes<NodeType>(list: NodeType[], nodes: NodeType
         const index = list.indexOf(node);
         const isNodeNew = index < 0;
         if (isNodeNew) {
-            newNodes.push(node);
-            list.splice(index, 1);
             list.push(node);
         } else {
+            newNodes.push(node);
+            list.splice(index, 1);
             list.push(node);
         }
     }
