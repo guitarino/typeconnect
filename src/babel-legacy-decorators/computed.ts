@@ -1,5 +1,4 @@
 import { Computed } from "../Computed";
-import { NodesCollector } from "../NodesCollector";
 import { createPropertyInitializer } from "./shared";
 
 export const COMPUTED_INITIALIZERS = '_typeConnectComputedInitializers';
@@ -18,7 +17,7 @@ export const computed: any = (
         descriptor.enumerable,
         descriptor.configurable,
         function createAndGetComputedNode(targetInstance) {
-            return new Computed(NodesCollector.get(), getter.bind(targetInstance));
+            return new Computed(getter.bind(targetInstance));
         }
     ));
     return descriptor;

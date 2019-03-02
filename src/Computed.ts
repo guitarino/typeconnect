@@ -1,4 +1,3 @@
-import { NodesCollector as INodesCollector } from "./NodesCollector.types";
 import { Node as INode } from "./Node.types";
 import { Computed as IComputed } from "./Computed.types";
 import { NodeUpdateFlag } from "./NodeUpdateFlag";
@@ -10,8 +9,8 @@ export class Computed extends Node implements IComputed {
     public calculateValue: () => any;
     public dependencies: INode[] = [];
 
-    constructor(nodesCollector: INodesCollector, calculateValue: () => any) {
-        super(nodesCollector);
+    constructor(calculateValue: () => any) {
+        super();
         this.calculateValue = calculateValue;
         this.recalculateValueAndUpdate();
     }

@@ -3,6 +3,7 @@ import { recalculateAndUpdatedNodeValuesIfNeeded } from "./utils/recalculateAndU
 import { getDerivedChildrenForNodes } from "./utils/getDerivedChildrenForNodes";
 import { insertAndGetNewNodes } from "./utils/insertAndGetNewNodes";
 import { NodeUpdateFlag } from "./NodeUpdateFlag";
+import { NodesCollector } from "./NodesCollector";
 import { NodesCollector as INodesCollector } from "./NodesCollector.types";
 import { Computed as IComputed } from "./Computed.types";
 import { Node as INode } from "./Node.types";
@@ -13,8 +14,8 @@ export class Node implements INode {
     public updateFlag: number = NodeUpdateFlag.NotUpdated;
     protected nodesCollector: INodesCollector;
 
-    constructor(nodesCollector: INodesCollector) {
-        this.nodesCollector = nodesCollector;
+    constructor() {
+        this.nodesCollector = NodesCollector.get();
     }
 
     public getValue() {
