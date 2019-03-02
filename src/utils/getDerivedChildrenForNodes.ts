@@ -1,5 +1,6 @@
 import { Node } from "../Node.types";
 import { Computed } from "../Computed.types";
+import { addUniqueItemToArray } from "./addUniqueItemToArray";
 
 export function getDerivedChildrenForNodes(nodes: Node[]): Computed[] {
     const derivedChildren: Computed[] = [];
@@ -7,9 +8,7 @@ export function getDerivedChildrenForNodes(nodes: Node[]): Computed[] {
         const node = nodes[i];
         for (let j = 0; j < node.derivedNodes.length; j++) {
             const derivedNode = node.derivedNodes[j];
-            if (derivedChildren.indexOf(derivedNode) < 0) {
-                derivedChildren.push(derivedNode);
-            }
+            addUniqueItemToArray(derivedNode, derivedChildren);
         }
     }
     return derivedChildren;
