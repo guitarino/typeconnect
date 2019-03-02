@@ -8,11 +8,11 @@ function createAndGetObservedNode(_targetInstance: Object, value: any) {
     return new Observed(NodesCollector.get(), value);
 }
 
-export function observed(
+export const observed: any = (
     target,
     property,
     descriptor
-) {
+) => {
     if (!target[OBSERVED_INITIALIZERS]) {
         target[OBSERVED_INITIALIZERS] = [];
     }

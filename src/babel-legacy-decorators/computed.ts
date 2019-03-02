@@ -4,11 +4,11 @@ import { createPropertyInitializer } from "./shared";
 
 export const COMPUTED_INITIALIZERS = '_typeConnectComputedInitializers';
 
-export function computed(
+export const computed: any = (
     target,
     property,
     descriptor
-) {
+) => {
     if (!target[COMPUTED_INITIALIZERS]) {
         target[COMPUTED_INITIALIZERS] = [];
     }
