@@ -39,7 +39,7 @@ class B {
     }
 }
 
-describe(`Inter-class level dependency`, () => {
+describe(`Inter-class dependency`, () => {
     const a = new A();
     const b = new B(a);
 

@@ -1,6 +1,7 @@
 import { lastArrayItem } from "./utils/lastArrayItem";
 import { Node as INode } from "./Node.types";
 import { NodesCollector as INodesCollector } from "./NodesCollector.types";
+import { addUniqueItemToArray } from "./utils/addUniqueItemToArray";
 
 export class NodesCollector implements INodesCollector {
     static instance: INodesCollector;
@@ -23,13 +24,11 @@ export class NodesCollector implements INodesCollector {
         if (!this.collectedStack.length) {
             return;
         }
-        lastArrayItem(this.collectedStack).push(node);
+        const lastCollected = lastArrayItem(this.collectedStack);
+        addUniqueItemToArray(node, lastCollected);
     }
 
     stop() {
-        if (!this.collectedStack.length) {
-            return [];
-        }
         const lastCollectedNodes = this.collectedStack.pop();
         if (lastCollectedNodes) {
             return lastCollectedNodes;
