@@ -1,26 +1,24 @@
 import { Computed } from "../Computed";
 import { NodesCollector } from "../NodesCollector";
+import { createPropertyInitializer } from "./shared";
 
-function initializeComputed(target: Object, property: string, defaultComputeValue: () => any) {
-    const computedNode = new Computed(NodesCollector.get(), defaultComputeValue);
-    Object.defineProperty(target, property, {
-        get() {
-            return computedNode.getValue();
-        },
-        set(newValue) {
-            computedNode.setValue(newValue);
-        }
-    });
-}
+export const COMPUTED_INITIALIZERS = '_typeConnectComputedInitializers';
 
-export function computed(_target, property, descriptor) {
-    return {
-        configurable: descriptor.configurable,
-        enumerable: descriptor.enumerable,
-        initializer() {
-            debugger;
-            const defaultComputeValue = descriptor.get.bind(this);
-            initializeComputed(this, property, defaultComputeValue);
-        }
+export function computed(
+    target,
+    property,
+    descriptor
+) {
+    if (!target[COMPUTED_INITIALIZERS]) {
+        target[COMPUTED_INITIALIZERS] = [];
     }
+    const getter = descriptor.get;
+    target[COMPUTED_INITIALIZERS].push(createPropertyInitializer(
+        property,
+        descriptor.enumerable,
+        descriptor.configurable,
+        function createAndGetComputedNode(targetInstance) {
+            return new Computed(NodesCollector.get(), getter.bind(targetInstance));
+        }
+    ));
 }

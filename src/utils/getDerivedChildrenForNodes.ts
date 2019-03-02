@@ -7,7 +7,7 @@ export function getDerivedChildrenForNodes(nodes: Node[]): Computed[] {
         const node = nodes[i];
         for (let j = 0; j < node.derivedNodes.length; j++) {
             const derivedNode = node.derivedNodes[j];
-            if (!derivedChildren.indexOf(derivedNode)) {
+            if (derivedChildren.indexOf(derivedNode) < 0) {
                 derivedChildren.push(derivedNode);
             }
         }

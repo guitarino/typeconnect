@@ -6,12 +6,10 @@ export class NodesCollector implements INodesCollector {
     static instance: INodesCollector;
 
     static get() {
-        if (NodesCollector.instance) {
-            return NodesCollector.instance;
+        if (!NodesCollector.instance) {
+            NodesCollector.instance = new NodesCollector();
         }
-        else {
-            return new NodesCollector();
-        }
+        return NodesCollector.instance;
     }
 
     private collectedStack: INode[][] = [];
@@ -29,6 +27,9 @@ export class NodesCollector implements INodesCollector {
     }
 
     stop() {
+        if (!this.collectedStack.length) {
+            return [];
+        }
         const lastCollectedNodes = this.collectedStack.pop();
         if (lastCollectedNodes) {
             return lastCollectedNodes;

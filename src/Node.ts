@@ -27,6 +27,7 @@ export class Node implements INode {
             this.value = newValue;
             this.updateFlag = NodeUpdateFlag.Updated;
             this.recalculateDerived();
+            this.updateFlag = NodeUpdateFlag.NotUpdated;
         }
     }
 

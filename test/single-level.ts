@@ -1,4 +1,4 @@
-import { computed, observed } from "./shared/decorators";
+import { connect, computed, observed } from "./shared/decorators";
 import { SinonSpy, fake } from "sinon";
 import expect from "expect.js";
 
@@ -11,14 +11,15 @@ class A {
 
     @computed
     public get c(): number {
-        // this.cCall();
+        this.cCall();
         return this.a + this.b;
     }
 
-    // public cCall: SinonSpy<any[], any>;
+    public cCall: SinonSpy<any[], any>;
 
     constructor() {
-        // this.cCall = fake();
+        this.cCall = fake();
+        connect(this);
     }
 }
 
@@ -30,15 +31,16 @@ class B {
 
     @computed
     public get d(): number {
-        // this.dCall();
+        this.dCall();
         return this.a.a + this.b;
     }
 
-    // public dCall: SinonSpy<any[], any>;
+    public dCall: SinonSpy<any[], any>;
 
     constructor(a: A) {
-        // this.dCall = fake();
+        this.dCall = fake();
         this.a = a;
+        connect(this);
     }
 }
 
