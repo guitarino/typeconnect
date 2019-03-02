@@ -8,7 +8,6 @@ export function insertAndGetNewNodes<NodeType>(list: NodeType[], nodes: NodeType
             newNodes.push(node);
             list.push(node);
         } else {
-            newNodes.push(node);
             list.splice(index, 1);
             list.push(node);
         }
