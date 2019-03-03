@@ -40,6 +40,10 @@ describe(`Avoiding unnecessary updates`, () => {
         expect(a.bCall.callCount).to.equal(3);
         expect(a.cCall.callCount).to.equal(2);
 
+        a.a = -6;
+        expect(a.bCall.callCount).to.equal(3);
+        expect(a.cCall.callCount).to.equal(2);
+
         expect(a.c).to.equal(-5);
     });
 });

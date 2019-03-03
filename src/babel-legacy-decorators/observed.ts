@@ -1,7 +1,6 @@
 import { Observed } from "../Observed";
-import { createPropertyInitializer } from "./shared";
-
-export const OBSERVED_INITIALIZERS = '_typeConnectObservedInitializers';
+import { getPropertyInitializers } from "./propertyInitialiers";
+import { createPropertyInitializer } from "./createPropertyInitializer";
 
 function createAndGetObservedNode(_targetInstance: Object, value: any) {
     return new Observed(value);
@@ -12,14 +11,13 @@ export const observed: any = (
     property,
     descriptor
 ) => {
-    if (!target[OBSERVED_INITIALIZERS]) {
-        target[OBSERVED_INITIALIZERS] = [];
-    }
-    target[OBSERVED_INITIALIZERS].push(createPropertyInitializer(
+    const propertyInitializers = getPropertyInitializers(target.constructor.prototype);
+    propertyInitializers.push(createPropertyInitializer({
         property,
-        descriptor.enumerable,
-        descriptor.configurable,
-        createAndGetObservedNode
-    ));
+        enumerable: descriptor.enumerable,
+        configurable: descriptor.configurable,
+        shouldSaveValue: true,
+        createAndGetNode: createAndGetObservedNode
+    }));
     return descriptor;
 }

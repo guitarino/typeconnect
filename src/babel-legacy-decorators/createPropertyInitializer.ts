@@ -1,13 +1,14 @@
 import { Node } from "../Node.types";
-import { createAndGetNode } from "../decorators.types";
+import { createPropertyInitializerOptions } from "../decorators.types";
 
-export function createPropertyInitializer(
-    property: string,
-    enumerable: boolean,
-    configurable: boolean,
-    createAndGetNode: createAndGetNode
-) {
-    return function populateSettersGettersAndGetNodeInitializer(target: Object, shouldSaveValue: boolean) {
+export function createPropertyInitializer({
+    property,
+    enumerable,
+    configurable,
+    shouldSaveValue,
+    createAndGetNode
+}: createPropertyInitializerOptions) {
+    return function populateSettersGettersAndGetNodeInitializer(target: Object) {
         let isInitialized = false;
         let node: Node;
         let value;

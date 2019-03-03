@@ -1,20 +1,15 @@
-import { OBSERVED_INITIALIZERS } from "./observed";
-import { COMPUTED_INITIALIZERS } from "./computed";
+import { getPropertyInitializers, deletePropertyInitializers } from "./propertyInitialiers";
 
 export function connect(target: Object) {
-    const observedInitializers = target.constructor.prototype[OBSERVED_INITIALIZERS];
-    const computedInitializers = target.constructor.prototype[COMPUTED_INITIALIZERS];
+    const propertyInitializers = getPropertyInitializers(target.constructor.prototype);
     const nodeInitializers: Function[] = [];
-    for (let i = 0; i < observedInitializers.length; i++) {
-        const initilizePropertyAndGetNodeInitializer = observedInitializers[i];
-        nodeInitializers.push(initilizePropertyAndGetNodeInitializer(target, true));
-    }
-    for (let i = 0; i < computedInitializers.length; i++) {
-        const initilizePropertyAndGetNodeInitializer = computedInitializers[i];
-        nodeInitializers.push(initilizePropertyAndGetNodeInitializer(target, false));
+    for (let i = 0; i < propertyInitializers.length; i++) {
+        const initilizePropertyAndGetNodeInitializer = propertyInitializers[i];
+        nodeInitializers.push(initilizePropertyAndGetNodeInitializer(target));
     }
     for (let i = 0; i < nodeInitializers.length; i++) {
         const initializeNode = nodeInitializers[i];
         initializeNode();
     }
+    deletePropertyInitializers(target.constructor.prototype);
 }

@@ -1,1 +1,1 @@
-export { observed, computed, connect } from '../../build/babel-legacy-decorators';
+export { observed, computed, connect, effected } from '../../build/babel-legacy-decorators';

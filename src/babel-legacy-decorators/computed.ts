@@ -1,24 +1,22 @@
 import { Computed } from "../Computed";
-import { createPropertyInitializer } from "./shared";
-
-export const COMPUTED_INITIALIZERS = '_typeConnectComputedInitializers';
+import { getPropertyInitializers } from "./propertyInitialiers";
+import { createPropertyInitializer } from "./createPropertyInitializer";
 
 export const computed: any = (
     target,
     property,
     descriptor
 ) => {
-    if (!target[COMPUTED_INITIALIZERS]) {
-        target[COMPUTED_INITIALIZERS] = [];
-    }
     const getter = descriptor.get;
-    target[COMPUTED_INITIALIZERS].push(createPropertyInitializer(
+    const propertyInitializers = getPropertyInitializers(target.constructor.prototype);
+    propertyInitializers.push(createPropertyInitializer({
         property,
-        descriptor.enumerable,
-        descriptor.configurable,
-        function createAndGetComputedNode(targetInstance) {
+        enumerable: descriptor.enumerable,
+        configurable: descriptor.configurable,
+        shouldSaveValue: false,
+        createAndGetNode: function createAndGetComputedNode(targetInstance) {
             return new Computed(getter.bind(targetInstance));
         }
-    ));
+    }));
     return descriptor;
 }
