@@ -1,6 +1,6 @@
 {
   "name": "typeconnect",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Connecting data and organizing module communication",
   "main": "index.js",
   "types": "index.d.ts",

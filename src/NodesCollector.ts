@@ -13,14 +13,14 @@ export class NodesCollector implements INodesCollector {
         return NodesCollector.instance;
     }
 
-    private collectedStack: INode[][] = [];
+    private collectedStack: INode<any>[][] = [];
 
     start() {
         const collectedNodes = [];
         this.collectedStack.push(collectedNodes);
     }
 
-    collect(node: INode) {
+    collect<T>(node: INode<T>) {
         if (!this.collectedStack.length) {
             return;
         }

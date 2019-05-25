@@ -1,5 +1,5 @@
 import { Node } from "./Node.types";
 
-export interface Computed extends Node {
+export interface Computed<T> extends Node<T> {
     recalculateValueAndUpdateIfNeeded: () => void;
 }
