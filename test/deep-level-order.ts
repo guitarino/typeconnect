@@ -1,60 +1,59 @@
-import { connect, computed, observed } from "./shared/decorators";
+import { connect } from "../build";
 import { SinonSpy, fake } from "sinon";
 import expect from "expect.js";
 
-class A {
-    bCall: SinonSpy<any[], any>;
-    cCall: SinonSpy<any[], any>;
-    dCall: SinonSpy<any[], any>;
-    eCall: SinonSpy<any[], any>;
-    fCall: SinonSpy<any[], any>;
+let bCall: SinonSpy<any[], any>;
+let cCall: SinonSpy<any[], any>;
+let dCall: SinonSpy<any[], any>;
+let eCall: SinonSpy<any[], any>;
+let fCall: SinonSpy<any[], any>;
 
+const A = connect(class {
     constructor() {
-        this.bCall = fake();
-        this.cCall = fake();
-        this.dCall = fake();
-        this.eCall = fake();
-        this.fCall = fake();
-        connect(this);
+        bCall = fake();
+        cCall = fake();
+        dCall = fake();
+        eCall = fake();
+        fCall = fake();
     }
 
-    @observed a: number = 1;
+    a: number = 1;
 
-    @computed get b(): number {
-        this.bCall();
+    get b(): number {
+        bCall();
         return this.a + 1;
     }
 
-    @computed get c(): number {
-        this.cCall();
+    get c(): number {
+        cCall();
         return this.a + 2;
     }
 
-    @computed get d(): number {
-        this.dCall();
+    get d(): number {
+        dCall();
         return this.b + 100;
     }
 
-    @computed get e(): number {
-        this.eCall();
+    get e(): number {
+        eCall();
         return this.d + 200;
     }
 
-    @computed get f(): number {
-        this.fCall();
+    get f(): number {
+        fCall();
         return this.e + this.c;
     }
-}
+});
 
 describe(`Deep level dependency correct order`, () => {
     const a = new A();
 
     it(`All "computed" getters are called once before manipulating values`, () => {
-        expect(a.bCall.callCount).to.equal(1);
-        expect(a.cCall.callCount).to.equal(1);
-        expect(a.dCall.callCount).to.equal(1);
-        expect(a.eCall.callCount).to.equal(1);
-        expect(a.fCall.callCount).to.equal(1);
+        expect(bCall.callCount).to.equal(1);
+        expect(cCall.callCount).to.equal(1);
+        expect(dCall.callCount).to.equal(1);
+        expect(eCall.callCount).to.equal(1);
+        expect(fCall.callCount).to.equal(1);
     });
 
     it(`Deepest "computed" has initially correct value`, () => {
@@ -67,10 +66,10 @@ describe(`Deep level dependency correct order`, () => {
     });
 
     it(`All "computed" values are recalculated efficiently upon update`, () => {
-        expect(a.bCall.callCount).to.equal(2);
-        expect(a.cCall.callCount).to.equal(2);
-        expect(a.dCall.callCount).to.equal(2);
-        expect(a.eCall.callCount).to.equal(2);
-        expect(a.fCall.callCount).to.equal(2);
+        expect(bCall.callCount).to.equal(2);
+        expect(cCall.callCount).to.equal(2);
+        expect(dCall.callCount).to.equal(2);
+        expect(eCall.callCount).to.equal(2);
+        expect(fCall.callCount).to.equal(2);
     });
 });

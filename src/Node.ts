@@ -8,9 +8,9 @@ import { NodesCollector as INodesCollector } from "./NodesCollector.types";
 import { Computed as IComputed } from "./Computed.types";
 import { Node as INode } from "./Node.types";
 
-export class Node implements INode {
-    public value: any;
-    public derivedNodes: IComputed[] = [];
+export abstract class Node<T> implements INode<T> {
+    public abstract value: T;
+    public derivedNodes: IComputed<any>[] = [];
     public updateFlag: number = NodeUpdateFlag.NotUpdated;
     protected nodesCollector: INodesCollector;
 
@@ -40,8 +40,8 @@ export class Node implements INode {
     }
 
     private getDerivedDescendents() {
-        let parents: INode[] = [this];
-        const derivedDescendents: IComputed[] = [];
+        let parents: INode<any>[] = [this];
+        const derivedDescendents: IComputed<any>[] = [];
         while (parents.length) {
             const derivedChildren = getDerivedChildrenForNodes(parents);
             parents = insertAndGetNewNodes(derivedDescendents, derivedChildren);

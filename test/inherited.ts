@@ -3,15 +3,27 @@ import { SinonSpy, fake } from "sinon";
 import expect from "expect.js";
 
 let cCall: SinonSpy<any[], any>;
+let dCall: SinonSpy<any[], any>;
 
-const A = connect(class {
+class B {
     constructor() {
-        cCall = fake();
+        dCall = fake();
     }
 
     a: number = 1;
     
     b: number = 2;
+
+    d() {
+        dCall(this.a + this.b);
+    }
+}
+
+const A = connect(class extends B {
+    constructor() {
+        cCall = fake();
+        super();
+    }
 
     get c(): number {
         cCall();
@@ -19,7 +31,7 @@ const A = connect(class {
     }
 });
 
-describe(`Single level dependency`, () => {
+describe(`Inherited class works like non-inherited class`, () => {
     const a = new A();
 
     it(`"Computed" getter is called before reading the value`, () => {
@@ -41,5 +53,10 @@ describe(`Single level dependency`, () => {
         a.b = 7;
         expect(a.c).to.equal(10);
         expect(cCall.calledThrice).to.equal(true);
+    });
+
+    it(`"Effected" value in inherited class gets called appropriately`, () => {
+        expect(dCall.calledThrice).to.equal(true);
+        expect(dCall.lastCall.calledWith(10));
     });
 });

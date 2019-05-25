@@ -5,14 +5,20 @@ import { Node } from "./Node";
 import { addUniqueItemToArray } from "./utils/addUniqueItemToArray";
 import { removeItemFromArrayIfExists } from "./utils/removeItemFromArrayIfExists";
 
-export class Computed extends Node implements IComputed {
-    public calculateValue: () => any;
-    public dependencies: INode[] = [];
+export class Computed<T> extends Node<T> implements IComputed<T> {
+    public value: T;
+    public calculateValue: () => T;
+    public dependencies: INode<any>[] = [];
 
-    constructor(calculateValue: () => any) {
+    constructor(calculateValue: () => T) {
         super();
         this.calculateValue = calculateValue;
-        this.recalculateValueAndUpdate();
+
+        // Calculate initial value:
+        this.nodesCollector.start();
+        const newValue = this.calculateValue();
+        this.setDependencies(this.nodesCollector.stop());
+        this.value = newValue;
     }
 
     private isAtLeastOneDependencyChanged() {
@@ -35,13 +41,6 @@ export class Computed extends Node implements IComputed {
                 this.updateFlag = NodeUpdateFlag.Updated;
             }
         }
-    }
-
-    private recalculateValueAndUpdate() {
-        this.nodesCollector.start();
-        const newValue = this.calculateValue();
-        this.setDependencies(this.nodesCollector.stop());
-        this.value = newValue;
     }
 
     private setDependencies(newDependencies) {

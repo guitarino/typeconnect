@@ -1,8 +1,8 @@
 import { Computed } from "./Computed.types";
 
-export interface Node {
+export interface Node<T> {
     updateFlag: number;
-    derivedNodes: Computed[];
-    getValue: () => any;
-    setValue: (newValue: any) => void;
+    derivedNodes: Computed<any>[];
+    getValue: () => T;
+    setValue: (newValue: T) => void;
 }

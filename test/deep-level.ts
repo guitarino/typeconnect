@@ -1,46 +1,45 @@
-import { connect, computed, observed } from "./shared/decorators";
+import { connect } from "../build";
 import { SinonSpy, fake } from "sinon";
 import expect from "expect.js";
 
-class A {
-    cCall: SinonSpy<any[], any>;
-    dCall: SinonSpy<any[], any>;
-    eCall: SinonSpy<any[], any>;
+let cCall: SinonSpy<any[], any>;
+let dCall: SinonSpy<any[], any>;
+let eCall: SinonSpy<any[], any>;
 
+const A = connect(class {
     constructor() {
-        this.cCall = fake();
-        this.dCall = fake();
-        this.eCall = fake();
-        connect(this);
+        cCall = fake();
+        dCall = fake();
+        eCall = fake();
     }
 
-    @observed a: number = 1;
+    a: number = 1;
     
-    @observed b: number = 2;
+    b: number = 2;
 
-    @computed get c(): number {
-        this.cCall();
+    get c(): number {
+        cCall();
         return this.a + this.b;
     }
 
-    @computed get d(): number {
-        this.dCall();
+    get d(): number {
+        dCall();
         return this.a + this.b + this.c;
     }
 
-    @computed get e(): number {
-        this.eCall();
+    get e(): number {
+        eCall();
         return this.a + this.b + this.c + this.d;
     }
-}
+});
 
 describe(`Deep level dependency`, () => {
     const a = new A();
 
     it(`All "computed" getters are called once before manipulating values`, () => {
-        expect(a.cCall.calledOnce).to.equal(true);
-        expect(a.dCall.calledOnce).to.equal(true);
-        expect(a.eCall.calledOnce).to.equal(true);
+        expect(cCall.calledOnce).to.equal(true);
+        expect(dCall.calledOnce).to.equal(true);
+        expect(eCall.calledOnce).to.equal(true);
     });
 
     it(`Deepest "computed" has initially correct value`, () => {
@@ -53,8 +52,8 @@ describe(`Deep level dependency`, () => {
     });
 
     it(`All "computed" values are recalculated efficiently upon update`, () => {
-        expect(a.cCall.calledTwice).to.equal(true);
-        expect(a.dCall.calledTwice).to.equal(true);
-        expect(a.eCall.calledTwice).to.equal(true);
+        expect(cCall.calledTwice).to.equal(true);
+        expect(dCall.calledTwice).to.equal(true);
+        expect(eCall.calledTwice).to.equal(true);
     });
 });

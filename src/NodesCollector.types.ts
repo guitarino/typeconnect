@@ -2,6 +2,6 @@ import { Node } from "./Node.types";
 
 export interface NodesCollector {
     start: () => void;
-    collect: (node: Node) => void;
-    stop: () => Node[];
+    collect: <T>(node: Node<T>) => void;
+    stop: () => Node<any>[];
 }
