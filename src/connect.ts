@@ -1,7 +1,21 @@
 import { Node } from "./Node";
 import { Computed } from "./Computed";
 import { Observed } from ".";
-import { NewableClass, PropertyDescriptors } from "./connect.types";
+import { NewableClass, PropertyDescriptors, Configuration, NodeLookup } from "./connect.types";
+
+const configuration: Configuration = {
+    addPropertyNamesToNodes: false,
+    addNodeLookupToClass: false,
+};
+
+export function configureConnect(newConfiguration: Partial<Configuration>) {
+    if (newConfiguration.addPropertyNamesToNodes) {
+        configuration.addPropertyNamesToNodes = newConfiguration.addPropertyNamesToNodes;
+    }
+    if (newConfiguration.addNodeLookupToClass) {
+        configuration.addNodeLookupToClass = newConfiguration.addNodeLookupToClass;
+    }
+}
 
 export function connect<UserClass extends NewableClass<Array<any>, any>>(userClass: UserClass): UserClass {
     class connectedClass extends userClass {
@@ -14,9 +28,13 @@ export function connect<UserClass extends NewableClass<Array<any>, any>>(userCla
 }
 
 function connectConstructor(object: Object): void {
+    const nodeLookup = {};
     const propertyDescriptors = getAllPropertyDescriptors(object);
     deleteOwnPropertiesFromObject(object);
-    defineConnectedProperties(object, propertyDescriptors);
+    defineConnectedProperties(object, propertyDescriptors, nodeLookup);
+    if (configuration.addNodeLookupToClass) {
+        defineNodeLookup(object, nodeLookup);
+    }
 }
 
 function deleteOwnPropertiesFromObject(object: Object): void {
@@ -47,11 +65,11 @@ function addOwnPropertyDescriptors(object: Object, propertyDescriptors: Property
     }
 }
 
-function defineConnectedProperties(object: Object, propertyDescriptors: PropertyDescriptors): void {
+function defineConnectedProperties(object: Object, propertyDescriptors: PropertyDescriptors, nodeLookup: NodeLookup): void {
     const propertyInitializers: Array<Function> = [];
     for (let p in propertyDescriptors) {
         const propertyDescriptor = propertyDescriptors[p];
-        const { descriptor, initializer } = createComputedInitializer(object, propertyDescriptor);
+        const { descriptor, initializer } = createComputedInitializer(object, p, propertyDescriptor, nodeLookup);
         propertyInitializers.push(initializer);
         Object.defineProperty(object, p, descriptor);
     }
@@ -65,7 +83,25 @@ function initializeProperties(object: Object, propertyInitializers: Array<Functi
     }
 }
 
-function createComputedInitializer(object: Object, propertyDescriptor: PropertyDescriptor) {
+function defineNodeLookup(object: Object, nodeLookup: NodeLookup) {
+    Object.defineProperty(object, '_nodeLookup', {
+        configurable: true,
+        enumerable: true,
+        writable: true,
+        value: nodeLookup
+    });
+}
+
+function defineNodeName(node: Node<any>, name: string) {
+    Object.defineProperty(node, '_nodeName', {
+        configurable: true,
+        enumerable: true,
+        writable: true,
+        value: name
+    });
+}
+
+function createComputedInitializer(object: Object, name: string, propertyDescriptor: PropertyDescriptor, nodeLookup: NodeLookup) {
     let node: Node<any>;
     let isInitialized = false;
     function initializeNodeIfNeeded() {
@@ -78,6 +114,12 @@ function createComputedInitializer(object: Object, propertyDescriptor: PropertyD
             }
             else {
                 node = new Observed(propertyDescriptor.value);
+            }
+            if (configuration.addPropertyNamesToNodes) {
+                defineNodeName(node, name);
+            }
+            if (configuration.addNodeLookupToClass) {
+                nodeLookup[name] = node;
             }
             isInitialized = true;
         }

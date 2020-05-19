@@ -1,7 +1,6 @@
 import { setNodesUpdateFlag } from "./utils/setNodesUpdateFlag";
 import { recalculateAndUpdatedNodeValuesIfNeeded } from "./utils/recalculateAndUpdatedNodeValuesIfNeeded";
-import { getDerivedChildrenForNodes } from "./utils/getDerivedChildrenForNodes";
-import { insertAndGetNewNodes } from "./utils/insertAndGetNewNodes";
+import { visitToDeriveDescendents } from "./utils/visitToDeriveDescendents";
 import { NodeUpdateFlag } from "./NodeUpdateFlag";
 import { NodesCollector } from "./NodesCollector";
 import { NodesCollector as INodesCollector } from "./NodesCollector.types";
@@ -40,11 +39,11 @@ export abstract class Node<T> implements INode<T> {
     }
 
     private getDerivedDescendents() {
-        let parents: INode<any>[] = [this];
         const derivedDescendents: IComputed<any>[] = [];
-        while (parents.length) {
-            const derivedChildren = getDerivedChildrenForNodes(parents);
-            parents = insertAndGetNewNodes(derivedDescendents, derivedChildren);
+        const visitingDescendents: IComputed<any>[] = [];
+        const visitedDescendents: IComputed<any>[] = [];
+        for (let i = 0; i < this.derivedNodes.length; i++) {
+            visitToDeriveDescendents(this.derivedNodes[i], derivedDescendents, visitingDescendents, visitedDescendents);
         }
         return derivedDescendents;
     }
