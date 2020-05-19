@@ -1,5 +1,5 @@
 import { Computed } from './Computed';
 import { Observed } from './Observed';
-import { connect, configureConnect } from './connect';
+import { connect, connectFactory, connectObject, configureConnect } from './connect';
 
-export { Computed, Observed, connect, configureConnect };
+export { Computed, Observed, connect, connectFactory, connectObject, configureConnect };

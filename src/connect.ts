@@ -21,13 +21,21 @@ export function connect<UserClass extends NewableClass<Array<any>, any>>(userCla
     class connectedClass extends userClass {
         constructor(...args) {
             super(...args);
-            connectConstructor(this);
+            connectObject(this);
         }
     }
     return connectedClass;
 }
 
-function connectConstructor(object: Object): void {
+export function connectFactory<A extends Array<any>, R>(factoryFunction: (...args: A) => R): (...args: A) => R {
+    return function connectedFactory(...args: A): R {
+        const result = factoryFunction(...args);
+        connectObject(result);
+        return result;
+    }
+}
+
+export function connectObject<T extends Object>(object: T): T {
     const nodeLookup = {};
     const propertyDescriptors = getAllPropertyDescriptors(object);
     deleteOwnPropertiesFromObject(object);
@@ -35,6 +43,7 @@ function connectConstructor(object: Object): void {
     if (configuration.addNodeLookupToClass) {
         defineNodeLookup(object, nodeLookup);
     }
+    return object;
 }
 
 function deleteOwnPropertiesFromObject(object: Object): void {
