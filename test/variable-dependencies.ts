@@ -1,8 +1,8 @@
 import { connect } from "../build";
-import { SinonSpy, fake } from "sinon";
-import expect from "expect.js";
+import { Fake, fake } from "./utils/fake";
+import assert from 'assert';
 
-let eCall: SinonSpy<any[], any>;
+let eCall: Fake;
 
 const A = connect(class {
 	constructor() {
@@ -33,45 +33,45 @@ describe(`Variable dependencies`, () => {
 	const a = new A();
 
 	it(`"Computed" value is initially correct`, () => {
-		expect(a.e).to.equal(3);
+		assert(a.e === 3);
 	});
 
 	it(`Inital dependencies are correct`, () => {
 		a.a = 5;
-		expect(eCall.callCount).to.equal(2);
+		assert(eCall.calls.length === 2);
 
 		a.b = 10;
-		expect(eCall.callCount).to.equal(3);
+		assert(eCall.calls.length === 3);
 
 		a.c = 500;
-		expect(eCall.callCount).to.equal(3);
+		assert(eCall.calls.length === 3);
 
 		a.d = 1000;
-		expect(eCall.callCount).to.equal(3);
+		assert(eCall.calls.length === 3);
 	});
 
 	it(`"Computed" value is correct upon update`, () => {
-		expect(a.e).to.equal(15);
+		assert(a.e === 15);
 	});
 
 	it(`Dependencies are recalculated correctly`, () => {
 		a.flag = false;
-		expect(eCall.callCount).to.equal(4);
+		assert(eCall.calls.length === 4);
 
 		a.a = 6;
-		expect(eCall.callCount).to.equal(4);
+		assert(eCall.calls.length === 4);
 
 		a.b = 20;
-		expect(eCall.callCount).to.equal(4);
+		assert(eCall.calls.length === 4);
 
 		a.c = 600;
-		expect(eCall.callCount).to.equal(5);
+		assert(eCall.calls.length === 5);
 
 		a.d = 1100;
-		expect(eCall.callCount).to.equal(6);
+		assert(eCall.calls.length === 6);
 	});
 
 	it(`"Computed" value is correct upon another update`, () => {
-		expect(a.e).to.equal(1700);
+		assert(a.e === 1700);
 	});
 });

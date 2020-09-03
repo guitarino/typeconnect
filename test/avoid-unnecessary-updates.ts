@@ -1,9 +1,9 @@
 import { connect } from "../build";
-import { SinonSpy, fake } from "sinon";
-import expect from "expect.js";
+import { Fake, fake } from "./utils/fake";
+import assert from 'assert';
 
-let bCall: SinonSpy<any[], any>;
-let cCall: SinonSpy<any[], any>;
+let bCall: Fake;
+let cCall: Fake;
 
 const A = connect(class {
 	constructor() {
@@ -28,21 +28,21 @@ describe(`Avoiding unnecessary updates`, () => {
 	const a = new A();
 
 	it(`Unncessary updates are avoided`, () => {
-		expect(bCall.callCount).to.equal(1);
-		expect(cCall.callCount).to.equal(1);
+		assert(bCall.calls.length === 1);
+		assert(cCall.calls.length === 1);
 
 		a.a = -1;
-		expect(bCall.callCount).to.equal(2);
-		expect(cCall.callCount).to.equal(2);
+		assert(bCall.calls.length === 2);
+		assert(cCall.calls.length === 2);
 
 		a.a = -6;
-		expect(bCall.callCount).to.equal(3);
-		expect(cCall.callCount).to.equal(2);
+		assert(bCall.calls.length === 3);
+		assert(cCall.calls.length === 2);
 
 		a.a = -6;
-		expect(bCall.callCount).to.equal(3);
-		expect(cCall.callCount).to.equal(2);
+		assert(bCall.calls.length === 3);
+		assert(cCall.calls.length === 2);
 
-		expect(a.c).to.equal(-5);
+		assert(a.c === -5);
 	});
 });

@@ -1,8 +1,8 @@
 import { connect } from "../build";
-import { SinonSpy, fake } from "sinon";
-import expect from "expect.js";
+import { Fake, fake } from "./utils/fake";
+import assert from 'assert';
 
-let cCall: SinonSpy<any[], any>;
+let cCall: Fake;
 
 const A = connect(class {
 	constructor() {
@@ -23,23 +23,23 @@ describe(`Single level dependency`, () => {
 	const a = new A();
 
 	it(`"Computed" getter is called before reading the value`, () => {
-		expect(cCall.calledOnce).to.equal(true);
+		assert(cCall.calls.length === 1);
 	});
 
 	it(`"Computed" value is initially correct`, () => {
-		expect(a.c).to.equal(3);
-		expect(cCall.calledOnce).to.equal(true);
+		assert(a.c === 3);
+		assert(cCall.calls.length === 1);
 	});
 
 	it(`"Computed" value recalculation can be caused by one dependency`, () => {
 		a.a = 3;
-		expect(a.c).to.equal(5);
-		expect(cCall.calledTwice).to.equal(true);
+		assert(a.c === 5);
+		assert(cCall.calls.length === 2);
 	});
 
 	it(`"Computed" value recalculation can be caused by another dependency`, () => {
 		a.b = 7;
-		expect(a.c).to.equal(10);
-		expect(cCall.calledThrice).to.equal(true);
+		assert(a.c === 10);
+		assert(cCall.calls.length === 3);
 	});
 });

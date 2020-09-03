@@ -1,6 +1,6 @@
 import { Observed, Computed } from "../build";
 import { CyclicError } from "../build/Errors";
-import expect from "expect.js";
+import assert from 'assert';
 
 function createA() {
 	var a = new Observed<number>(1);
@@ -47,24 +47,32 @@ describe(`Errors in case of cyclic dependencies`, () => {
 	const b = createB();
 
 	it(`Direct cyclic dependency throws error on update`, () => {
-		expect(() => {
-			a.a.setValue(2);
-			a.a.setValue(3);
-		}).to.throwException((e: CyclicError) => {
-			expect(e instanceof CyclicError).to.equal(true);
-			expect(e.path.length).to.equal(2);
-			expect(e.path[0] === e.path[1]).to.equal(true);
-		});
+		assert.throws(
+			() => {
+				a.a.setValue(2);
+				a.a.setValue(3);
+			},
+			(e: CyclicError) => {
+				assert(e instanceof CyclicError === true);
+				assert(e.path.length === 2);
+				assert(e.path[0] === e.path[1]);
+				return true;
+			}
+		);
 	});
 
 	it(`Deep cyclic dependency throws error on update`, () => {
-		expect(() => {
-			b.a.setValue(2);
-			b.a.setValue(3);
-		}).to.throwException((e: CyclicError) => {
-			expect(e instanceof CyclicError).to.equal(true);
-			expect(e.path.length).to.equal(5);
-			expect(e.path[0] === e.path[4]).to.equal(true);
-		});
+		assert.throws(
+			() => {
+				b.a.setValue(2);
+				b.a.setValue(3);
+			},
+			(e: CyclicError) => {
+				assert(e instanceof CyclicError === true);
+				assert(e.path.length === 5);
+				assert(e.path[0] === e.path[4]);
+				return true;
+			}
+		);
 	});
 });

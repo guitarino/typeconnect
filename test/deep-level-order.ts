@@ -1,13 +1,13 @@
 import { connect } from "../build";
-import { SinonSpy, fake } from "sinon";
-import expect from "expect.js";
+import { Fake, fake } from "./utils/fake";
+import assert from 'assert';
 
-let bCall: SinonSpy<any[], any>;
-let cCall: SinonSpy<any[], any>;
-let dCall: SinonSpy<any[], any>;
-let eCall: SinonSpy<any[], any>;
-let fCall: SinonSpy<any[], any>;
-let gCall: SinonSpy<any[], any>;
+let bCall: Fake;
+let cCall: Fake;
+let dCall: Fake;
+let eCall: Fake;
+let fCall: Fake;
+let gCall: Fake;
 
 const A = connect(class {
 	constructor() {
@@ -56,29 +56,29 @@ describe(`Deep level dependency correct order`, () => {
 	const a = new A();
 
 	it(`All "computed" getters are called once before manipulating values`, () => {
-		expect(bCall.callCount).to.equal(1);
-		expect(cCall.callCount).to.equal(1);
-		expect(dCall.callCount).to.equal(1);
-		expect(eCall.callCount).to.equal(1);
-		expect(fCall.callCount).to.equal(1);
-		expect(gCall.callCount).to.equal(1);
+		assert(bCall.calls.length === 1);
+		assert(cCall.calls.length === 1);
+		assert(dCall.calls.length === 1);
+		assert(eCall.calls.length === 1);
+		assert(fCall.calls.length === 1);
+		assert(gCall.calls.length === 1);
 	});
 
 	it(`Deepest "computed" has initially correct value`, () => {
-		expect(a.g).to.equal(44212);
+		assert(a.g === 44212);
 	});
 
 	it(`Deepest "computed" has correct value after update`, () => {
 		a.a = 2;
-		expect(a.g).to.equal(44214);
+		assert(a.g === 44214);
 	});
 
 	it(`All "computed" values are recalculated efficiently upon update`, () => {
-		expect(bCall.callCount).to.equal(2);
-		expect(cCall.callCount).to.equal(2);
-		expect(dCall.callCount).to.equal(2);
-		expect(eCall.callCount).to.equal(2);
-		expect(fCall.callCount).to.equal(2);
-		expect(gCall.callCount).to.equal(2);
+		assert(bCall.calls.length === 2);
+		assert(cCall.calls.length === 2);
+		assert(dCall.calls.length === 2);
+		assert(eCall.calls.length === 2);
+		assert(fCall.calls.length === 2);
+		assert(gCall.calls.length === 2);
 	});
 });

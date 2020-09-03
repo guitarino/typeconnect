@@ -1,5 +1,5 @@
 import { connect, configureConnect } from "../build";
-import expect from "expect.js";
+import assert from 'assert';
 
 class TemplateClass {
 	a: number = 1;
@@ -35,36 +35,36 @@ describe(`Node lookup and node names`, () => {
 
 	it(`Does not return nodes unless configured`, () => {
 		const aInDebug = a as any;
-		expect(aInDebug._nodeLookup === undefined).to.equal(true);
+		assert(aInDebug._nodeLookup === undefined);
 	});
 
 	it(`Returns nodes correctly if configured`, () => {
 		const bInDebug = b as any;
-		expect(bInDebug._nodeLookup !== undefined).to.equal(true);
+		assert(bInDebug._nodeLookup !== undefined);
 
-		expect(bInDebug._nodeLookup.a !== undefined).to.equal(true);
-		expect(bInDebug._nodeLookup.b !== undefined).to.equal(true);
-		expect(bInDebug._nodeLookup.c !== undefined).to.equal(true);
-		expect(bInDebug._nodeLookup.d !== undefined).to.equal(true);
+		assert(bInDebug._nodeLookup.a !== undefined);
+		assert(bInDebug._nodeLookup.b !== undefined);
+		assert(bInDebug._nodeLookup.c !== undefined);
+		assert(bInDebug._nodeLookup.d !== undefined);
 
-		expect(bInDebug._nodeLookup.a.getValue()).to.equal(1);
-		expect(bInDebug._nodeLookup.b.getValue()).to.equal(2);
-		expect(bInDebug._nodeLookup.c.getValue()).to.equal(3);
+		assert(bInDebug._nodeLookup.a.getValue() === 1);
+		assert(bInDebug._nodeLookup.b.getValue() === 2);
+		assert(bInDebug._nodeLookup.c.getValue() === 3);
 	});
 
 	it(`Does not have node names unless configured`, () => {
 		const bInDebug = b as any;
-		expect(bInDebug._nodeLookup.a._nodeName === undefined).to.equal(true);
-		expect(bInDebug._nodeLookup.b._nodeName === undefined).to.equal(true);
-		expect(bInDebug._nodeLookup.c._nodeName === undefined).to.equal(true);
-		expect(bInDebug._nodeLookup.d._nodeName === undefined).to.equal(true);
+		assert(bInDebug._nodeLookup.a._nodeName === undefined);
+		assert(bInDebug._nodeLookup.b._nodeName === undefined);
+		assert(bInDebug._nodeLookup.c._nodeName === undefined);
+		assert(bInDebug._nodeLookup.d._nodeName === undefined);
 	});
 
 	it(`Has correct node names if configured`, () => {
 		const cInDebug = c as any;
-		expect(cInDebug._nodeLookup.a._nodeName).to.equal('a');
-		expect(cInDebug._nodeLookup.b._nodeName).to.equal('b');
-		expect(cInDebug._nodeLookup.c._nodeName).to.equal('c');
-		expect(cInDebug._nodeLookup.d._nodeName).to.equal('d');
+		assert(cInDebug._nodeLookup.a._nodeName === 'a');
+		assert(cInDebug._nodeLookup.b._nodeName === 'b');
+		assert(cInDebug._nodeLookup.c._nodeName === 'c');
+		assert(cInDebug._nodeLookup.d._nodeName === 'd');
 	});
 });

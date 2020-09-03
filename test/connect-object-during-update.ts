@@ -1,5 +1,5 @@
 import { connectObject } from "../build";
-import expect from "expect.js";
+import assert from 'assert';
 
 describe('Connecting object during update', () => {
 	let counter = 0;
@@ -26,23 +26,23 @@ describe('Connecting object during update', () => {
 	});
 
 	it('Parent does not connect to child', () => {
-		expect(obj.b).to.equal(null);
+		assert(obj.b === null);
 		
 		obj.a = 1;
-		expect(counter).to.equal(2);
+		assert(counter === 2);
 
 		obj.b!.a = 1;
-		expect(counter).to.equal(2);
-		expect(obj.b!.b).to.equal(101);
+		assert(counter === 2);
+		assert(obj.b!.b === 101);
 
 		obj.b!.a = 2;
-		expect(counter).to.equal(2);
-		expect(obj.b!.b).to.equal(102);
+		assert(counter === 2);
+		assert(obj.b!.b === 102);
 	});
 
 	it('Connections of a child do not become connections of a parent', () => {
 		obj.a = 300;
-		expect(counter).to.equal(2);
-		expect(obj.b!.c).to.equal(300);
+		assert(counter === 2);
+		assert(obj.b!.c === 300);
 	});
 })
