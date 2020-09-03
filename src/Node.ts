@@ -8,43 +8,43 @@ import { Computed as IComputed } from "./Computed.types";
 import { Node as INode } from "./Node.types";
 
 export abstract class Node<T> implements INode<T> {
-    public abstract value: T;
-    public derivedNodes: IComputed<any>[] = [];
-    public updateFlag: number = NodeUpdateFlag.NotUpdated;
-    protected nodesCollector: INodesCollector;
+	public abstract value: T;
+	public derivedNodes: IComputed<any>[] = [];
+	public updateFlag: number = NodeUpdateFlag.NotUpdated;
+	protected nodesCollector: INodesCollector;
 
-    constructor() {
-        this.nodesCollector = NodesCollector.get();
-    }
+	constructor() {
+		this.nodesCollector = NodesCollector.get();
+	}
 
-    public getValue() {
-        this.nodesCollector.collect(this);
-        return this.value;
-    }
+	public getValue() {
+		this.nodesCollector.collect(this);
+		return this.value;
+	}
 
-    public setValue(newValue) {
-        if (this.value !== newValue) {
-            this.value = newValue;
-            this.updateFlag = NodeUpdateFlag.Updated;
-            this.recalculateDerived();
-            this.updateFlag = NodeUpdateFlag.NotUpdated;
-        }
-    }
+	public setValue(newValue) {
+		if (this.value !== newValue) {
+			this.value = newValue;
+			this.updateFlag = NodeUpdateFlag.Updated;
+			this.recalculateDerived();
+			this.updateFlag = NodeUpdateFlag.NotUpdated;
+		}
+	}
 
-    private recalculateDerived() {
-        const derivedDescendents = this.getDerivedDescendents();
-        setNodesUpdateFlag(derivedDescendents, NodeUpdateFlag.Unknown);
-        recalculateAndUpdatedNodeValuesIfNeeded(derivedDescendents);
-        setNodesUpdateFlag(derivedDescendents, NodeUpdateFlag.NotUpdated);
-    }
+	private recalculateDerived() {
+		const derivedDescendents = this.getDerivedDescendents();
+		setNodesUpdateFlag(derivedDescendents, NodeUpdateFlag.Unknown);
+		recalculateAndUpdatedNodeValuesIfNeeded(derivedDescendents);
+		setNodesUpdateFlag(derivedDescendents, NodeUpdateFlag.NotUpdated);
+	}
 
-    private getDerivedDescendents() {
-        const derivedDescendents: IComputed<any>[] = [];
-        const visitingDescendents: IComputed<any>[] = [];
-        const visitedDescendents: IComputed<any>[] = [];
-        for (let i = 0; i < this.derivedNodes.length; i++) {
-            visitToDeriveDescendents(this.derivedNodes[i], derivedDescendents, visitingDescendents, visitedDescendents);
-        }
-        return derivedDescendents;
-    }
+	private getDerivedDescendents() {
+		const derivedDescendents: IComputed<any>[] = [];
+		const visitingDescendents: IComputed<any>[] = [];
+		const visitedDescendents: IComputed<any>[] = [];
+		for (let i = 0; i < this.derivedNodes.length; i++) {
+			visitToDeriveDescendents(this.derivedNodes[i], derivedDescendents, visitingDescendents, visitedDescendents);
+		}
+		return derivedDescendents;
+	}
 }

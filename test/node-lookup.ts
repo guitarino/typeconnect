@@ -2,12 +2,12 @@ import { connect, configureConnect } from "../build";
 import expect from "expect.js";
 
 class TemplateClass {
-    a: number = 1;
-    
-    b: number = 2;
+	a: number = 1;
+	
+	b: number = 2;
 
-    get c(): number {
-        return this.a + this.b;
+	get c(): number {
+		return this.a + this.b;
 	}
 	
 	d(): number {
