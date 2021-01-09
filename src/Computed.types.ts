@@ -1,5 +1,6 @@
-import { Node } from "./Node.types";
+import { INode } from "./Node.types";
 
-export interface Computed<T> extends Node<T> {
-	recalculateValueAndUpdateIfNeeded: () => void;
+export interface IComputed<T> extends INode<T> {
+	calculate: () => T;
+	dependencies: INode<any>[];
 }
