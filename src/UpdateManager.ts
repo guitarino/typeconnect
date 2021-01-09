@@ -47,7 +47,7 @@ export class UpdateManager {
 
 	public addComputed(node: IComputed<any>, calculate: () => any) {
 		node.calculate = calculate;
-		this.calculateValueAndDependencies(node);
+		node.value = this.calculateValueAndDependencies(node);
 	}
 
 	public set(node: INode<any>, newValue: any) {
@@ -96,7 +96,17 @@ export class UpdateManager {
 			this.scheduledId = null;
 		}
 		this.isUpdating = true;
-		this.updateScheduledNodes();
+		try {
+			this.updateScheduledNodes();
+			this.cleanupUpdate();
+		}
+		catch (error) {
+			this.cleanupUpdate();
+			throw error;
+		}
+	}
+
+	private cleanupUpdate() {
 		this.isUpdating = false;
 		this.scheduledNodes = [];
 		this.modifiedNodes = [];

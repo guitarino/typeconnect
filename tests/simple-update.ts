@@ -54,8 +54,15 @@ test(`After updating multiple values at the same time, the update happens on the
 	t.assert(c.cCall.calls.length === 2);
 	t.assert(c.b.get() === 26);
 	t.assert(c.c.get() === 49);
+	c.z.set(4);
 	t.assert(c.bCall.calls.length === 2);
 	t.assert(c.cCall.calls.length === 2);
+	await next();
+	t.assert(c.bCall.calls.length === 2);
+	t.assert(c.cCall.calls.length === 3);
+	t.assert(c.c.get() === 50);
+	t.assert(c.bCall.calls.length === 2);
+	t.assert(c.cCall.calls.length === 3);
 });
 
 test(`After updating multiple values at the same time, the update happens when getting a value`, t => {
@@ -70,4 +77,8 @@ test(`After updating multiple values at the same time, the update happens when g
 	t.assert(c.c.get() === 49);
 	t.assert(c.bCall.calls.length === 2);
 	t.assert(c.cCall.calls.length === 2);
+	c.z.set(4);
+	t.assert(c.c.get() === 50);
+	t.assert(c.bCall.calls.length === 2);
+	t.assert(c.cCall.calls.length === 3);
 });
