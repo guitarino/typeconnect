@@ -58,7 +58,7 @@ export class UpdateManager {
 	}
 
 	public get(node: INode<any>) {
-		// When during the update, .get() is called,
+		// If we call .get() during the current update, 
 		// we shouldn't retrigger the update. If we call .get()
 		// outside of the existing update, we need to trigger
 		// the update, since a dependency might have changed.
@@ -73,7 +73,7 @@ export class UpdateManager {
 		this.scheduledNodes.push(node);
 		this.modifiedNodes.push(node);
 		// If the update is already scheduled, we should just
-		// wait for it rather than triggering it again
+		// wait for it rather than scheduling it again
 		if (this.scheduledId === null) {
 			this.scheduledId = this.scheduleFunction(() => {
 				this.scheduledId = null;
