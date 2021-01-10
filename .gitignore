@@ -8,3 +8,6 @@
 
 old/
 node_modules/
+coverage/
+build/
+playground/

@@ -1,5 +1,5 @@
 import test from "ava";
-import { connectObject } from "../src/main";
+import { connectObject } from "../src";
 import { fake, Fake } from "./utils/fake";
 
 type A = {

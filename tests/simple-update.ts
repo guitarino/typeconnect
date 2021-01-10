@@ -1,5 +1,5 @@
 import test from "ava";
-import { Computed, Observed } from "../src/main";
+import { Computed, Observed } from "../src";
 import { fake, Fake } from "./utils/fake";
 import { next } from "./utils/next";
 

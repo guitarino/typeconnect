@@ -1,5 +1,5 @@
 import test from "ava";
-import { connect } from "../src/main";
+import { connect } from "../src";
 import { Fake, fake } from "./utils/fake";
 
 interface A {

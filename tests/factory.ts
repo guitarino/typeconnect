@@ -1,6 +1,6 @@
 import test from "ava";
 import { Fake, fake } from "./utils/fake";
-import { connectFactory } from "../src/main";
+import { connectFactory } from "../src";
 
 type TestContext = {
 	cCall: Fake,

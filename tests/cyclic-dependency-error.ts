@@ -1,5 +1,5 @@
 import test from "ava";
-import { Computed, CyclicError, Observed } from "../src/main";
+import { Computed, CyclicError, Observed } from "../src";
 
 type A = {
 	a: Observed<number>,
