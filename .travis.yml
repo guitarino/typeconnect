@@ -13,4 +13,4 @@ script: yarn run build
 
 after_success:
   - yarn run test:cov
-  - yarn run cov_report
+  - npm install coveralls@3.1.0 && yarn run nyc report --reporter=text-lcov | ./node_modules/.bin/coveralls
