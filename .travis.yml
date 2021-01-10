@@ -1,5 +1,3 @@
-sudo: required
-
 language: node_js
 node_js: stable
 
@@ -15,4 +13,5 @@ script: yarn run build
 
 after_success:
   - yarn run test:cov
+  - npm install coveralls@3.1.0
   - yarn run cov_report
