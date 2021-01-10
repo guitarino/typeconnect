@@ -12,5 +12,4 @@ install: yarn
 script: yarn run build
 
 after_success:
-  - yarn run test:cov
-  - yarn run cov_report
+  - yarn run test:cov:report
