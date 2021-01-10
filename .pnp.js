@@ -48,6 +48,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["ava", "npm:3.15.0"],
             ["babel-loader", "virtual:6f2b6ac4ab19d5e28bda7bbfecd521b6942566f73e8a8c8879f720b7e1ee360fccb48acaf7dfe1132ca9ca396480479f578c0cc7b820c0a6301e371b55954a31#npm:8.2.2"],
             ["c8", "npm:7.4.0"],
+            ["coveralls", "npm:3.1.0"],
             ["cpy-cli", "npm:3.1.1"],
             ["pnp-webpack-plugin", "npm:1.6.4"],
             ["rimraf", "npm:3.0.2"],
@@ -4062,6 +4063,20 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
+      ["coveralls", [
+        ["npm:3.1.0", {
+          "packageLocation": "./.yarn/cache/coveralls-npm-3.1.0-598f5463a9-bac2998bf3.zip/node_modules/coveralls/",
+          "packageDependencies": [
+            ["coveralls", "npm:3.1.0"],
+            ["js-yaml", "npm:3.14.1"],
+            ["lcov-parse", "npm:1.0.0"],
+            ["log-driver", "npm:1.2.7"],
+            ["minimist", "npm:1.2.5"],
+            ["request", "npm:2.88.2"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
       ["cp-file", [
         ["npm:7.0.0", {
           "packageLocation": "./.yarn/cache/cp-file-npm-7.0.0-f8cf3451db-e6a1ae9340.zip/node_modules/cp-file/",
@@ -6225,6 +6240,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
+      ["lcov-parse", [
+        ["npm:1.0.0", {
+          "packageLocation": "./.yarn/cache/lcov-parse-npm-1.0.0-c94e390b1c-7747ea686f.zip/node_modules/lcov-parse/",
+          "packageDependencies": [
+            ["lcov-parse", "npm:1.0.0"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
       ["lines-and-columns", [
         ["npm:1.1.6", {
           "packageLocation": "./.yarn/cache/lines-and-columns-npm-1.1.6-23e74fab67-798b80ed7a.zip/node_modules/lines-and-columns/",
@@ -6301,6 +6325,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/lodash-npm-4.17.20-c0db62021c-c62101d250.zip/node_modules/lodash/",
           "packageDependencies": [
             ["lodash", "npm:4.17.20"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["log-driver", [
+        ["npm:1.2.7", {
+          "packageLocation": "./.yarn/cache/log-driver-npm-1.2.7-1d1901a631-b4355545c3.zip/node_modules/log-driver/",
+          "packageDependencies": [
+            ["log-driver", "npm:1.2.7"]
           ],
           "linkType": "HARD",
         }]
@@ -8757,6 +8790,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["ava", "npm:3.15.0"],
             ["babel-loader", "virtual:6f2b6ac4ab19d5e28bda7bbfecd521b6942566f73e8a8c8879f720b7e1ee360fccb48acaf7dfe1132ca9ca396480479f578c0cc7b820c0a6301e371b55954a31#npm:8.2.2"],
             ["c8", "npm:7.4.0"],
+            ["coveralls", "npm:3.1.0"],
             ["cpy-cli", "npm:3.1.1"],
             ["pnp-webpack-plugin", "npm:1.6.4"],
             ["rimraf", "npm:3.0.2"],
