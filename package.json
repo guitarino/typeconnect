@@ -11,7 +11,7 @@
     "types": "tsc -d --emitDeclarationOnly --outDir build src/index.ts",
     "test": "ava",
     "test:cov": "nyc --include src --all ava",
-    "cov_report": "nyc report --reporter=text-lcov | coveralls",
+    "cov_report": "NODE_ENV=test nyc report --reporter=text-lcov | coveralls",
     "prep": "rimraf ./build && yarn run build && cpy ./package.json ./LICENSE ./README.md ./build",
     "pub": "yarn run prep && cd build && npm publish"
   },
