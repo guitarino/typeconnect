@@ -1,8 +1,9 @@
 {
 	"compilerOptions": {
-		"target": "esnext",
+		"target": "ES5",
 		"experimentalDecorators": true,
-		"moduleResolution": "node",
+		"module": "CommonJS",
+		"moduleResolution": "Node",
 		"allowJs": true,
 		"noEmit": true,
 		"strict": true,
@@ -10,10 +11,7 @@
 		"esModuleInterop": true,
 		"noImplicitAny": false,
 		"skipLibCheck": true,
-		"types": [
-			"node",
-			"mocha"
-		]
+		"strictPropertyInitialization": false
 	},
 	"include": [
 		"src",

@@ -1,7 +1,23 @@
-import { Node } from "./Node";
+import { INode } from "./Node.types";
 import { Computed } from "./Computed";
-import { Observed } from ".";
-import { NewableClass, PropertyDescriptors, Configuration, NodeLookup } from "./connect.types";
+import { Observed } from "./Observed";
+
+type NodeLookup = {
+	[k: string]: INode<any>
+};
+
+type Configuration = {
+	addPropertyNamesToNodes: boolean,
+	addNodeLookupToClass: boolean,
+};
+
+type NewableClass<ConstructorArguments extends Array<any>, ClassInstance> = {
+	new (...args: ConstructorArguments): ClassInstance;
+};
+
+type PropertyDescriptors = {
+	[k: string]: PropertyDescriptor
+}
 
 const configuration: Configuration = {
 	addPropertyNamesToNodes: false,
@@ -101,7 +117,7 @@ function defineNodeLookup(object: Object, nodeLookup: NodeLookup) {
 	});
 }
 
-function defineNodeName(node: Node<any>, name: string) {
+function defineNodeName(node: INode<any>, name: string) {
 	Object.defineProperty(node, '_nodeName', {
 		configurable: true,
 		enumerable: true,
@@ -111,7 +127,7 @@ function defineNodeName(node: Node<any>, name: string) {
 }
 
 function createComputedInitializer(object: Object, name: string, propertyDescriptor: PropertyDescriptor, nodeLookup: NodeLookup) {
-	let node: Node<any>;
+	let node: INode<any>;
 	let isInitialized = false;
 	function initializeNodeIfNeeded() {
 		if (!isInitialized) {
@@ -142,10 +158,10 @@ function createComputedInitializer(object: Object, name: string, propertyDescrip
 				enumerable: propertyDescriptor.enumerable,
 				get() {
 					initializeNodeIfNeeded();
-					return node.getValue();
+					return node.get();
 				},
 				set(newValue) {
-					node.setValue(newValue);
+					node.set(newValue);
 				}
 			}
 	}
