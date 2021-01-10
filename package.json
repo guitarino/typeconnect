@@ -11,7 +11,7 @@
     "types": "tsc -d --emitDeclarationOnly --outDir build src/index.ts",
     "test": "ava",
     "test:cov": "c8 --include src --all yarn run test",
-    "cov_report": "c8 report --include src --all --reporter=text-lcov | coveralls",
+    "cov_report": "c8 report --include src --all --reporter=text-lcov | yarn run coveralls",
     "prep": "rimraf ./build && yarn run build && cpy ./package.json ./LICENSE ./README.md ./build",
     "pub": "yarn run prep && cd build && npm publish"
   },
