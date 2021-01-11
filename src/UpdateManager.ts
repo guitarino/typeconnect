@@ -4,6 +4,11 @@ import { INode } from "./Node.types";
 import { NodeCollector } from "./NodeCollector";
 import { SingleUpdateManger } from "./SingleUpdateManager";
 
+type ScheduledUpdate = {
+	nodes: INode<any>[],
+	modified: INode<any>[],
+};
+
 function scheduleDefault(update: () => any) {
 	return setTimeout(() => {
 		update();
@@ -27,15 +32,11 @@ export class UpdateManager {
 	private dependenciesManager: DependenciesManager;
 	private nodeCollector: NodeCollector;
 
-	private scheduledNodes: INode<any>[] = [];
-	private modifiedNodes: INode<any>[] = [];
-
-	private currentlyScheduledNodes: INode<any>[] = [];
-	private currentlyModifiedNodes: INode<any>[] = [];
+	private scheduledId: any = null;
+	private scheduledUpdates: ScheduledUpdate[] = [];
 
 	private isUpdating = false;
 
-	private scheduledId: any = null;
 	public scheduleFunction: (update: () => any) => any;
 	public cancelFunction: (scheduledId: any) => any;
 
@@ -75,8 +76,17 @@ export class UpdateManager {
 	}
 
 	private scheduleUpdate(node: INode<any>) {
-		this.scheduledNodes.push(node);
-		this.modifiedNodes.push(node);
+		if (this.scheduledUpdates.length === 0 || this.isUpdating) {
+			this.scheduledUpdates.push({
+				nodes: [node],
+				modified: [node],
+			});
+		}
+		else {
+			const lastUpdate = this.scheduledUpdates[this.scheduledUpdates.length - 1];
+			lastUpdate.nodes.push(node);
+			lastUpdate.modified.push(node);
+		}
 		// If the update is already scheduled, we should just
 		// wait for it rather than scheduling it again
 		if (this.scheduledId === null) {
@@ -88,11 +98,12 @@ export class UpdateManager {
 	}
 
 	private triggerUpdate() {
-		// If there's no scheduledNodes, e.g. during outside ".get()" call,
+		// If there's no scheduledUpdates, e.g. during outside ".get()" call,
 		// then triggerUpdate should do nothing
-		if (this.scheduledNodes.length < 1) {
+		if (this.scheduledUpdates.length === 0) {
 			return;
 		}
+		this.isUpdating = true;
 		// If we call triggerUpdate() after the update was
 		// already scheduled, we should cancel the update and
 		// just run it synchronously
@@ -100,23 +111,15 @@ export class UpdateManager {
 			this.cancelFunction(this.scheduledId);
 			this.scheduledId = null;
 		}
-		// From now on, we clean up the scheduled and modified fields, so that
-		// they can be used if another update is to be scheduled, as it happens
-		// when a Computed calls a ".set()" on another node during update.
-		// We use "currentlyScheduledNodes" and "currentlyModifiedNodes" for the rest
-		// of the update.
-		this.currentlyScheduledNodes = this.scheduledNodes;
-		this.currentlyModifiedNodes = this.modifiedNodes;
-		this.scheduledNodes = [];
-		this.modifiedNodes = [];
-
-		this.isUpdating = true;
 		try {
-			const singleUpdateManager = new SingleUpdateManger(
-				this.currentlyScheduledNodes,
-				this.currentlyModifiedNodes
-			);
-			singleUpdateManager.update();
+			for (let i = 0; i < this.scheduledUpdates.length; i++) {
+				const scheduled = this.scheduledUpdates[i];
+				const singleUpdateManager = new SingleUpdateManger(
+					scheduled.nodes,
+					scheduled.modified
+				);
+				singleUpdateManager.update();
+			}
 			this.cleanupUpdate();
 		}
 		catch (error) {
@@ -127,7 +130,6 @@ export class UpdateManager {
 
 	private cleanupUpdate() {
 		this.isUpdating = false;
-		this.currentlyScheduledNodes = [];
-		this.currentlyModifiedNodes = [];
+		this.scheduledUpdates = [];
 	}
 }
