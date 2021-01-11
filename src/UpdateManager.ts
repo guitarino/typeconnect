@@ -35,10 +35,7 @@ export class UpdateManager {
 	private scheduledId: any = null;
 	private scheduledUpdates: ScheduledUpdate[] = [];
 
-	private updIndex: number = -1;
-	private get isUpdating(): boolean {
-		return this.updIndex >= 0;
-	}
+	private currentUpdateIndex: number = -1;
 
 	public scheduleFunction: (update: () => any) => any;
 	public cancelFunction: (scheduledId: any) => any;
@@ -71,7 +68,7 @@ export class UpdateManager {
 		// we shouldn't retrigger the update. If we call .get()
 		// outside of the existing update, we need to trigger
 		// the update, since a dependency might have changed.
-		if (!this.isUpdating) {
+		if (this.currentUpdateIndex < 0) {
 			this.triggerUpdate();
 		}
 		this.nodeCollector.collect(node);
@@ -79,14 +76,14 @@ export class UpdateManager {
 	}
 
 	private scheduleUpdate(node: INode<any>) {
-		if (this.scheduledUpdates.length === 0 || (this.scheduledUpdates.length - 1 <= this.updIndex)) {
+		if (this.scheduledUpdates.length === 0 || (this.scheduledUpdates.length - 1 <= this.currentUpdateIndex)) {
 			this.scheduledUpdates.push({
 				nodes: [node],
 				modified: [node],
 			});
 		}
 		else {
-			const nextUpdate = this.scheduledUpdates[this.updIndex + 1];
+			const nextUpdate = this.scheduledUpdates[this.currentUpdateIndex + 1];
 			nextUpdate.nodes.push(node);
 			nextUpdate.modified.push(node);
 		}
@@ -114,8 +111,8 @@ export class UpdateManager {
 			return;
 		}
 		try {
-			for (this.updIndex = 0; this.updIndex < this.scheduledUpdates.length; this.updIndex++) {
-				const scheduled = this.scheduledUpdates[this.updIndex];
+			for (this.currentUpdateIndex = 0; this.currentUpdateIndex < this.scheduledUpdates.length; this.currentUpdateIndex++) {
+				const scheduled = this.scheduledUpdates[this.currentUpdateIndex];
 				const singleUpdateManager = new SingleUpdateManger(
 					scheduled.nodes,
 					scheduled.modified
@@ -131,7 +128,7 @@ export class UpdateManager {
 	}
 
 	private cleanupUpdate() {
-		this.updIndex = -1;
+		this.currentUpdateIndex = -1;
 		this.scheduledUpdates = [];
 	}
 }
