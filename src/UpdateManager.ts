@@ -98,12 +98,6 @@ export class UpdateManager {
 	}
 
 	private triggerUpdate() {
-		// If there's no scheduledUpdates, e.g. during outside ".get()" call,
-		// then triggerUpdate should do nothing
-		if (this.scheduledUpdates.length === 0) {
-			return;
-		}
-		this.isUpdating = true;
 		// If we call triggerUpdate() after the update was
 		// already scheduled, we should cancel the update and
 		// just run it synchronously
@@ -111,6 +105,12 @@ export class UpdateManager {
 			this.cancelFunction(this.scheduledId);
 			this.scheduledId = null;
 		}
+		// If there's no scheduledUpdates, e.g. during outside ".get()" call,
+		// then triggerUpdate should do nothing
+		if (this.scheduledUpdates.length === 0) {
+			return;
+		}
+		this.isUpdating = true;
 		try {
 			for (let i = 0; i < this.scheduledUpdates.length; i++) {
 				const scheduled = this.scheduledUpdates[i];
