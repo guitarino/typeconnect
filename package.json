@@ -1,6 +1,6 @@
 {
   "name": "typeconnect",
-  "version": "0.5.3",
+  "version": "0.5.4",
   "description": "Connecting data and organizing module communication",
   "main": "index.js",
   "repository": "https://github.com/guitarino/typeconnect.git",

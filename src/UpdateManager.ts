@@ -35,7 +35,10 @@ export class UpdateManager {
 	private scheduledId: any = null;
 	private scheduledUpdates: ScheduledUpdate[] = [];
 
-	private isUpdating = false;
+	private updIndex: number = -1;
+	private get isUpdating(): boolean {
+		return this.updIndex >= 0;
+	}
 
 	public scheduleFunction: (update: () => any) => any;
 	public cancelFunction: (scheduledId: any) => any;
@@ -76,16 +79,16 @@ export class UpdateManager {
 	}
 
 	private scheduleUpdate(node: INode<any>) {
-		if (this.scheduledUpdates.length === 0 || this.isUpdating) {
+		if (this.scheduledUpdates.length === 0 || (this.scheduledUpdates.length - 1 <= this.updIndex)) {
 			this.scheduledUpdates.push({
 				nodes: [node],
 				modified: [node],
 			});
 		}
 		else {
-			const lastUpdate = this.scheduledUpdates[this.scheduledUpdates.length - 1];
-			lastUpdate.nodes.push(node);
-			lastUpdate.modified.push(node);
+			const nextUpdate = this.scheduledUpdates[this.updIndex + 1];
+			nextUpdate.nodes.push(node);
+			nextUpdate.modified.push(node);
 		}
 		// If the update is already scheduled, we should just
 		// wait for it rather than scheduling it again
@@ -110,10 +113,9 @@ export class UpdateManager {
 		if (this.scheduledUpdates.length === 0) {
 			return;
 		}
-		this.isUpdating = true;
 		try {
-			for (let i = 0; i < this.scheduledUpdates.length; i++) {
-				const scheduled = this.scheduledUpdates[i];
+			for (this.updIndex = 0; this.updIndex < this.scheduledUpdates.length; this.updIndex++) {
+				const scheduled = this.scheduledUpdates[this.updIndex];
 				const singleUpdateManager = new SingleUpdateManger(
 					scheduled.nodes,
 					scheduled.modified
@@ -129,7 +131,7 @@ export class UpdateManager {
 	}
 
 	private cleanupUpdate() {
-		this.isUpdating = false;
+		this.updIndex = -1;
 		this.scheduledUpdates = [];
 	}
 }

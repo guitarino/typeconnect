@@ -1,21 +1,8 @@
 import test from "ava";
+import { fake } from "./utils/fake";
 import { connect } from "../src";
 
-interface A {
-	a: number,
-	b: number,
-	c: number,
-	d: number,
-	e: number,
-	f: number,
-	g: number,
-}
-
-type TestContext = {
-	a: A,
-};
-
-test.beforeEach(t => {
+test(`Setting a value during an update works as expected`, t => {
 	const A = connect(class {
 		a: number = 0;
 
@@ -50,21 +37,43 @@ test.beforeEach(t => {
 		}
 	});
 
-	const c: TestContext = {
-		a: new A()
-	};
+	const a = new A();
 
-	t.context = c;
+	a.a = -1;
+	t.assert(a.b === -2);
+	t.assert(a.c === -6);
+	t.assert(a.d === -24);
+	t.assert(a.e === -120);
+	t.assert(a.f === -720);
+	t.assert(a.g === -5040);
 });
 
-test(`Setting a value during an update works as expected`, t => {
-	const c = t.context as TestContext;
+test(`Setting multiple values by single Computed during an update works efficiently`, t => {
+	const dCall = fake();
 
-	c.a.a = -1;
-	t.assert(c.a.b === -2);
-	t.assert(c.a.c === -6);
-	t.assert(c.a.d === -24);
-	t.assert(c.a.e === -120);
-	t.assert(c.a.f === -720);
-	t.assert(c.a.g === -5040);
+	const B = connect(class {
+		a: number = 0;
+
+		b: number = 0;
+
+		c: number = 0;
+
+		d: number = 0;
+	
+		updateBC() {
+			this.b = this.a * 3;
+			this.c = this.a * 4;
+			this.d = this.a * 5;
+		}
+
+		dTest() {
+			dCall(this.c, this.d);
+		}
+	});
+
+	const b = new B();
+
+	b.a = -3;
+	t.assert(b.d === -15);
+	t.assert(dCall.calls.length === 2);
 });
