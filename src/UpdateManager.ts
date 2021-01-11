@@ -1,8 +1,8 @@
 import { IComputed } from "./Computed.types";
+import { DependenciesManager } from "./DependenciesManager";
 import { INode } from "./Node.types";
 import { NodeCollector } from "./NodeCollector";
-import { ResolutionVisitor } from "./ResolutionVisitor";
-import { addUniqueItemToArray, removeItemFromArrayIfExists } from "./utils";
+import { SingleUpdateManger } from "./SingleUpdateManager";
 
 function scheduleDefault(update: () => any) {
 	return setTimeout(() => {
@@ -24,6 +24,7 @@ export class UpdateManager {
 		return UpdateManager.instance;
 	}
 	
+	private dependenciesManager: DependenciesManager;
 	private nodeCollector: NodeCollector;
 
 	private scheduledNodes: INode<any>[] = [];
@@ -39,6 +40,7 @@ export class UpdateManager {
 	public cancelFunction: (scheduledId: any) => any;
 
 	constructor() {
+		this.dependenciesManager = DependenciesManager.get();
 		this.nodeCollector = NodeCollector.get();
 		this.scheduleFunction = scheduleDefault;
 		this.cancelFunction = cancelDefault;
@@ -50,7 +52,7 @@ export class UpdateManager {
 
 	public addComputed(node: IComputed<any>, calculate: () => any) {
 		node.calculate = calculate;
-		node.value = this.calculateValueAndDependencies(node);
+		node.value = this.dependenciesManager.calculateValueAndDependencies(node);
 	}
 
 	public set(node: INode<any>, newValue: any) {
@@ -110,7 +112,11 @@ export class UpdateManager {
 
 		this.isUpdating = true;
 		try {
-			this.updateScheduledNodes();
+			const singleUpdateManager = new SingleUpdateManger(
+				this.currentlyScheduledNodes,
+				this.currentlyModifiedNodes
+			);
+			singleUpdateManager.update();
 			this.cleanupUpdate();
 		}
 		catch (error) {
@@ -123,81 +129,5 @@ export class UpdateManager {
 		this.isUpdating = false;
 		this.currentlyScheduledNodes = [];
 		this.currentlyModifiedNodes = [];
-	}
-
-	private updateScheduledNodes() {
-		const resolutionVisitor = new ResolutionVisitor();
-		for (let i = 0; i < this.currentlyScheduledNodes.length; i++) {
-			const scheduledNode = this.currentlyScheduledNodes[i];
-			for (let j = 0; j < scheduledNode.derivedNodes.length; j++) {
-				this.visitNode(scheduledNode.derivedNodes[j], resolutionVisitor);
-			}
-		}
-		this.recalculateDerviedNodes(resolutionVisitor.getResolved());
-	}
-
-	private visitNode(node: IComputed<any>, resolutionVisitor: ResolutionVisitor) {
-		if (!resolutionVisitor.shouldEnter(node)) {
-			return;
-		}
-		resolutionVisitor.pre(node);
-		for (let i = 0; i < node.derivedNodes.length; i++) {
-			this.visitNode(node.derivedNodes[i], resolutionVisitor);
-		}
-		resolutionVisitor.post(node);
-	}
-
-	private recalculateDerviedNodes(derivedNodes: IComputed<any>[]) {
-		for (let i = 0; i < derivedNodes.length; i++) {
-			const derived = derivedNodes[i];
-			this.recalculateValueAndUpdateIfNeeded(derived);
-		}
-	}
-
-	private calculateValueAndDependencies(node: IComputed<any>) {
-		this.nodeCollector.start();
-		const newValue = node.calculate();
-		this.setDependencies(node, this.nodeCollector.stop());
-		return newValue;
-	}
-
-	private setDependencies(node: IComputed<any>, newDependencies: INode<any>[]) {
-		this.removeFromDerivedListOfDependencies(node);
-		node.dependencies = newDependencies;
-		this.addToDerivedListOfDependencies(node);
-	}
-
-	private removeFromDerivedListOfDependencies(node: IComputed<any>) {
-		for (let i = 0; i < node.dependencies.length; i++) {
-			const dependency = node.dependencies[i];
-			removeItemFromArrayIfExists(node, dependency.derivedNodes);
-		}
-	}
-
-	private addToDerivedListOfDependencies(node: IComputed<any>) {
-		for (let i = 0; i < node.dependencies.length; i++) {
-			const dependency = node.dependencies[i];
-			addUniqueItemToArray(node, dependency.derivedNodes);
-		}
-	}
-
-	private recalculateValueAndUpdateIfNeeded(node: IComputed<any>) {
-		if (this.isAtLeastOneDependencyChanged(node)) {
-			const newValue = this.calculateValueAndDependencies(node);
-			if (node.value !== newValue) {
-				node.value = newValue;
-				this.currentlyModifiedNodes.push(node);
-			}
-		}
-	}
-
-	private isAtLeastOneDependencyChanged(node: IComputed<any>) {
-		for (let i = 0; i < node.dependencies.length; i++) {
-			const dependency = node.dependencies[i];
-			if (this.currentlyModifiedNodes.indexOf(dependency) >= 0) {
-				return true;
-			}
-		}
-		return false;
 	}
 }
