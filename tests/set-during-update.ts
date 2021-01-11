@@ -1,5 +1,5 @@
 import test from "ava";
-import { configureConnect, connect } from "../src";
+import { connect } from "../src";
 
 interface A {
 	a: number,
@@ -16,11 +16,6 @@ type TestContext = {
 };
 
 test.beforeEach(t => {
-	configureConnect({
-		addNodeLookupToClass: true,
-		addPropertyNamesToNodes: true,
-	});
-
 	const A = connect(class {
 		a: number = 0;
 
