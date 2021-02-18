@@ -37,12 +37,14 @@ export class UpdateManager {
 
 	private currentUpdateIndex: number = -1;
 
+	public setCallback: null | ((node: INode<any>, newValue: any) => any);
 	public scheduleFunction: (update: () => any) => any;
 	public cancelFunction: (scheduledId: any) => any;
 
 	constructor() {
 		this.dependenciesManager = DependenciesManager.get();
 		this.nodeCollector = NodeCollector.get();
+		this.setCallback = null;
 		this.scheduleFunction = scheduleDefault;
 		this.cancelFunction = cancelDefault;
 	}
@@ -57,6 +59,9 @@ export class UpdateManager {
 	}
 
 	public set(node: INode<any>, newValue: any) {
+		if (this.setCallback) {
+			this.setCallback(node, newValue);
+		}
 		if (node.value !== newValue) {
 			node.value = newValue;
 			this.scheduleUpdate(node);
