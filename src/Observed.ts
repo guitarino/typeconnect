@@ -1,6 +1,6 @@
 import { IComputed } from "./Computed.types";
 import { IObserved } from "./Observed.types";
-import { UpdateManager } from "./UpdateManager";
+import type { UpdateManager } from "./UpdateManager";
 
 export function create(updateManager: UpdateManager) {
 

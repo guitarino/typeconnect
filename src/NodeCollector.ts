@@ -1,4 +1,4 @@
-import { INode } from "./Node.types";
+import type { INode } from "./Node.types";
 import { addUniqueItemToArray, lastArrayItem } from "./utils";
 
 export class NodeCollector {

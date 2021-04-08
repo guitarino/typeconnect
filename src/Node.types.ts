@@ -1,4 +1,4 @@
-import { IComputed } from "./Computed.types";
+import type { IComputed } from "./Computed.types";
 
 export interface INode<T> {
 	value: T;

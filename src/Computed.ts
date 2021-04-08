@@ -1,6 +1,6 @@
-import { IComputed } from "./Computed.types";
-import { INode } from "./Node.types";
-import { UpdateManager } from "./UpdateManager";
+import type { IComputed } from "./Computed.types";
+import type { INode } from "./Node.types";
+import type { UpdateManager } from "./UpdateManager";
 
 export function create(updateManager: UpdateManager) {
 

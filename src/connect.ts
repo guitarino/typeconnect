@@ -1,4 +1,4 @@
-import { INode } from "./Node.types";
+import type { INode } from "./Node.types";
 import type { create as createComputed } from "./Computed";
 import type { create as createObserved } from "./Observed";
 

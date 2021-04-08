@@ -1,4 +1,4 @@
-import { IComputed } from "./Computed.types";
+import type { IComputed } from "./Computed.types";
 
 export class CyclicError extends Error {
 	public path: IComputed<any>[];

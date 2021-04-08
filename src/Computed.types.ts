@@ -1,4 +1,4 @@
-import { INode } from "./Node.types";
+import type { INode } from "./Node.types";
 
 export interface IComputed<T> extends INode<T> {
 	calculate: () => T;

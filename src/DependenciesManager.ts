@@ -1,6 +1,6 @@
-import { IComputed } from "./Computed.types";
-import { INode } from "./Node.types";
-import { NodeCollector } from "./NodeCollector";
+import type { IComputed } from "./Computed.types";
+import type { INode } from "./Node.types";
+import type { NodeCollector } from "./NodeCollector";
 import { addUniqueItemToArray, removeItemFromArrayIfExists } from "./utils";
 
 export class DependenciesManager {

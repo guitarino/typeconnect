@@ -1,6 +1,6 @@
-import { IComputed } from "./Computed.types";
+import type { IComputed } from "./Computed.types";
 import type { DependenciesManager } from "./DependenciesManager";
-import { INode } from "./Node.types";
+import type { INode } from "./Node.types";
 import type { NodeCollector } from "./NodeCollector";
 import { SingleUpdateManger } from "./SingleUpdateManager";
 
