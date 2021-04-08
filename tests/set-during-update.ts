@@ -1,6 +1,6 @@
 import test from "ava";
 import { fake } from "./utils/fake";
-import { connect } from "../src";
+import { connect } from "./utils/api";
 
 test(`Setting a value during an update works as expected`, t => {
 	const A = connect(class {

@@ -1,6 +1,6 @@
 import test from "ava";
 import { fake } from "./utils/fake";
-import { configureConnect, connect } from "../src";
+import { configureConnect, connect } from "./utils/api";
 
 type TestContext = {
 	a: any,

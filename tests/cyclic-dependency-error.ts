@@ -1,14 +1,14 @@
 import test from "ava";
-import { Computed, CyclicError, Observed } from "../src";
+import { Computed, CyclicError, Observed, IObserved, IComputed } from "./utils/api";
 
 type A = {
-	a: Observed<number>,
-	b: Computed<number>,
+	a: IObserved<number>,
+	b: IComputed<number>,
 };
 
 type B = {
-	a: Observed<number>,
-	b: Computed<number>,
+	a: IObserved<number>,
+	b: IComputed<number>,
 };
 
 type TestContext = {
@@ -30,7 +30,7 @@ test.beforeEach(t => {
 	function createB() {
 		var a = new Observed<number>(1);
 	
-		var e: Computed<number>;
+		var e: IComputed<number>;
 	
 		var b = new Computed<number>(() => {
 			return !e

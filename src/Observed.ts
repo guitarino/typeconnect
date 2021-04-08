@@ -1,22 +1,23 @@
 import { IComputed } from "./Computed.types";
-import { INode } from "./Node.types";
+import { IObserved } from "./Observed.types";
 import { UpdateManager } from "./UpdateManager";
 
-export class Observed<T> implements INode<T> {
-	private updateManager: UpdateManager;
-	public value: T;
-	public derivedNodes: IComputed<any>[] = [];
+export function create(updateManager: UpdateManager) {
 
-	constructor(value: T) {
-		this.updateManager = UpdateManager.get();
-		this.updateManager.addObserved(this, value);
-	}
+	return class Observed<T> implements IObserved<T> {
+		public value: T;
+		public derivedNodes: IComputed<any>[] = [];
 
-	public set(newValue: T) {
-		this.updateManager.set(this, newValue);
-	}
+		constructor(value: T) {
+			updateManager.addObserved(this, value);
+		}
 
-	public get() {
-		return this.updateManager.get(this);
+		public set(newValue: T) {
+			updateManager.set(this, newValue);
+		}
+
+		public get() {
+			return updateManager.get(this);
+		}
 	}
 }

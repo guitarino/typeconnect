@@ -1,7 +1,7 @@
 import { IComputed } from "./Computed.types";
-import { DependenciesManager } from "./DependenciesManager";
+import type { DependenciesManager } from "./DependenciesManager";
 import { INode } from "./Node.types";
-import { NodeCollector } from "./NodeCollector";
+import type { NodeCollector } from "./NodeCollector";
 import { SingleUpdateManger } from "./SingleUpdateManager";
 
 type ScheduledUpdate = {
@@ -20,15 +20,6 @@ function cancelDefault(id: any) {
 }
 
 export class UpdateManager {
-	private static instance: UpdateManager;
-
-	static get() {
-		if (!UpdateManager.instance) {
-			UpdateManager.instance = new UpdateManager();
-		}
-		return UpdateManager.instance;
-	}
-	
 	private dependenciesManager: DependenciesManager;
 	private nodeCollector: NodeCollector;
 
@@ -41,9 +32,9 @@ export class UpdateManager {
 	public scheduleFunction: (update: () => any) => any;
 	public cancelFunction: (scheduledId: any) => any;
 
-	constructor() {
-		this.dependenciesManager = DependenciesManager.get();
-		this.nodeCollector = NodeCollector.get();
+	constructor(dependenciesManager: DependenciesManager, nodeCollector: NodeCollector) {
+		this.dependenciesManager = dependenciesManager;
+		this.nodeCollector = nodeCollector;
 		this.setCallback = null;
 		this.scheduleFunction = scheduleDefault;
 		this.cancelFunction = cancelDefault;
@@ -119,6 +110,7 @@ export class UpdateManager {
 			for (this.currentUpdateIndex = 0; this.currentUpdateIndex < this.scheduledUpdates.length; this.currentUpdateIndex++) {
 				const scheduled = this.scheduledUpdates[this.currentUpdateIndex];
 				const singleUpdateManager = new SingleUpdateManger(
+					this.dependenciesManager,
 					scheduled.nodes,
 					scheduled.modified
 				);

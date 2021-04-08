@@ -4,19 +4,11 @@ import { NodeCollector } from "./NodeCollector";
 import { addUniqueItemToArray, removeItemFromArrayIfExists } from "./utils";
 
 export class DependenciesManager {
-	private static instance: DependenciesManager;
-
-	static get() {
-		if (!DependenciesManager.instance) {
-			DependenciesManager.instance = new DependenciesManager();
-		}
-		return DependenciesManager.instance;
-	}
-
+	
 	private nodeCollector: NodeCollector;
 
-	constructor() {
-		this.nodeCollector = NodeCollector.get();
+	constructor(nodeCollector: NodeCollector) {
+		this.nodeCollector = nodeCollector;
 	}
 
 	public calculateValueAndDependencies(node: IComputed<any>) {

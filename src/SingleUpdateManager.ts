@@ -1,5 +1,5 @@
 import { IComputed } from "./Computed.types";
-import { DependenciesManager } from "./DependenciesManager";
+import type { DependenciesManager } from "./DependenciesManager";
 import { INode } from "./Node.types";
 import { ResolutionVisitor } from "./ResolutionVisitor";
 
@@ -9,8 +9,8 @@ export class SingleUpdateManger {
 	private scheduledNodes: INode<any>[] = [];
 	private modifiedNodes: INode<any>[] = [];
 
-	constructor(scheduledNodes: INode<any>[], modifiedNodes: INode<any>[]) {
-		this.dependenciesManager = DependenciesManager.get();
+	constructor(dependenciesManager: DependenciesManager, scheduledNodes: INode<any>[], modifiedNodes: INode<any>[]) {
+		this.dependenciesManager = dependenciesManager;
 		this.resolutionVisitor = new ResolutionVisitor();
 		this.scheduledNodes = scheduledNodes;
 		this.modifiedNodes = modifiedNodes;

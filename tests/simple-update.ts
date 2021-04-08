@@ -1,17 +1,17 @@
 import test from "ava";
-import { Computed, Observed } from "../src";
+import { Computed, Observed, IComputed, IObserved } from "./utils/api";
 import { fake, Fake } from "./utils/fake";
 import { next } from "./utils/next";
 
 type TestContext = {
-	a: Observed<number>,
-	b: Computed<number>,
+	a: IObserved<number>,
+	b: IComputed<number>,
 	bCall: Fake,
-	c: Computed<number>,
+	c: IComputed<number>,
 	cCall: Fake,
-	x: Observed<number>,
-	y: Observed<number>,
-	z: Observed<number>,
+	x: IObserved<number>,
+	y: IObserved<number>,
+	z: IObserved<number>,
 };
 
 test.beforeEach(t => {

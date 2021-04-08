@@ -1,5 +1,5 @@
 import test from "ava";
-import { connectObject } from "../src";
+import { connectObject } from "./utils/api";
 
 test(`Connecting object during update`, t => {
 	let counter = 0;
