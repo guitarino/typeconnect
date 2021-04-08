@@ -13,20 +13,20 @@ export { CyclicError };
 export type { IComputed, IObserved };
 
 export function create() {
-    const nodeCollector = new NodeCollector();
-    const dependenciesManager = new DependenciesManager(nodeCollector);
-    const updateManager = new UpdateManager(dependenciesManager, nodeCollector);
-    const Computed = createComputed(updateManager);
-    const Observed = createObserved(updateManager);
-    const { connect, connectFactory, connectObject, configureConnect } = createAPI(Computed, Observed);
+	const nodeCollector = new NodeCollector();
+	const dependenciesManager = new DependenciesManager(nodeCollector);
+	const updateManager = new UpdateManager(dependenciesManager, nodeCollector);
+	const Computed = createComputed(updateManager);
+	const Observed = createObserved(updateManager);
+	const { connect, connectFactory, connectObject, configureConnect } = createAPI(Computed, Observed);
 
-    return {
-        Computed,
-        Observed,
-        connect,
-        connectFactory,
-        connectObject,
-        configureConnect,
-        updateManager,
-    }
+	return {
+		Computed,
+		Observed,
+		connect,
+		connectFactory,
+		connectObject,
+		configureConnect,
+		updateManager,
+	}
 }
