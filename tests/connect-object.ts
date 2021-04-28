@@ -1,5 +1,5 @@
 import test from "ava";
-import { connectObject } from "./utils/api";
+import { connectObject, connectEffect } from "./utils/api";
 import { fake, Fake } from "./utils/fake";
 
 type A = {
@@ -46,14 +46,16 @@ test.beforeEach(t => {
 				debugger;
 				return result;
 			},
-			e() {
-				eCall(this.b + this.d);
-			}
 		});
 	};
 
 	const a = createA();
 	const b = createB(a);
+
+	connectEffect(
+		() => b.b + b.d,
+		result => eCall(result),
+	);
 
 	const context: TestContext = {
 		a, b, cCall, dCall, eCall,

@@ -1,6 +1,6 @@
 import test from "ava";
 import { Fake, fake } from "./utils/fake";
-import { connect } from "./utils/api";
+import { connect, connectEffect } from "./utils/api";
 
 type TestContext = {
 	cCall: Fake,
@@ -20,10 +20,6 @@ test.beforeEach(t => {
 		a: number = 1;
 		
 		b: number = 2;
-	
-		d() {
-			dCall(this.a + this.b);
-		}
 	}
 	
 	const A = connect(class extends B {
@@ -38,6 +34,11 @@ test.beforeEach(t => {
 	});
 
 	const a = new A();
+	
+	connectEffect(
+		() => a.a + a.b,
+		result => dCall(result),
+	);
 	
 	const c: TestContext = {
 		a, cCall, dCall,

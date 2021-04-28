@@ -9,9 +9,6 @@ type TestContext = {
 };
 
 test.beforeEach(t => {
-	const cCall = fake();
-	const dCall = fake();
-
 	class TemplateClass {
 		a: number = 1;
 		
@@ -21,7 +18,7 @@ test.beforeEach(t => {
 			return this.a + this.b;
 		}
 		
-		d(): number {
+		get d(): number {
 			return this.c + 4;
 		}
 	}
@@ -30,7 +27,7 @@ test.beforeEach(t => {
 	const a = new A();
 
 	configureConnect({
-		addNodeLookupToClass: true,
+		addNodeLookup: true,
 	});
 	
 	const B = connect(TemplateClass);

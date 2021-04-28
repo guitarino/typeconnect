@@ -1,14 +1,12 @@
 import type { INode } from "./Node.types";
 import type { create as createComputed } from "./Computed";
 import type { create as createObserved } from "./Observed";
+import type { UpdateManager } from "./UpdateManager";
+import type { Configuration } from './configuration';
+import { configureConnect } from './configuration';
 
 type NodeLookup = {
 	[k: string]: INode<any>
-};
-
-type Configuration = {
-	addPropertyNamesToNodes: boolean,
-	addNodeLookupToClass: boolean,
 };
 
 type NewableClass<ConstructorArguments extends Array<any>, ClassInstance> = {
@@ -19,21 +17,7 @@ type PropertyDescriptors = {
 	[k: string]: PropertyDescriptor
 }
 
-export function create(Computed: ReturnType<typeof createComputed>, Observed: ReturnType<typeof createObserved>) {
-
-	const configuration: Configuration = {
-		addPropertyNamesToNodes: false,
-		addNodeLookupToClass: false,
-	};
-
-	function configureConnect(newConfiguration: Partial<Configuration>) {
-		if (newConfiguration.addPropertyNamesToNodes) {
-			configuration.addPropertyNamesToNodes = newConfiguration.addPropertyNamesToNodes;
-		}
-		if (newConfiguration.addNodeLookupToClass) {
-			configuration.addNodeLookupToClass = newConfiguration.addNodeLookupToClass;
-		}
-	}
+export function create(configuration: Configuration, updateManager: UpdateManager, Computed: ReturnType<typeof createComputed>, Observed: ReturnType<typeof createObserved>) {
 
 	function connect<UserClass extends NewableClass<Array<any>, any>>(userClass: UserClass): UserClass {
 		class connectedClass extends userClass {
@@ -58,10 +42,32 @@ export function create(Computed: ReturnType<typeof createComputed>, Observed: Re
 		const propertyDescriptors = getAllPropertyDescriptors(object);
 		deleteOwnPropertiesFromObject(object);
 		defineConnectedProperties(object, propertyDescriptors, nodeLookup);
-		if (configuration.addNodeLookupToClass) {
+		if (configuration.addNodeLookup) {
 			defineNodeLookup(object, nodeLookup);
 		}
 		return object;
+	}
+
+	function connectEffect<ComputedValue, Result>(
+		calculate: () => ComputedValue,
+		effect: (computedValue: ComputedValue) => Result,
+	): () => Result {
+		const runEffect = (computedValue: ComputedValue) =>
+			updateManager.callWithoutCollect(() => effect(computedValue));
+
+		const computed = new Computed(() => {
+			const computedValue = calculate();
+			runEffect(computedValue);
+			return computedValue;
+		});
+
+		const returnedEffect = () => runEffect(computed.get());
+
+		if (configuration.addNodeLookup) {
+			defineNodeOnEffect(returnedEffect, computed);
+		}
+
+		return returnedEffect;
 	}
 
 	function deleteOwnPropertiesFromObject(object: Object): void {
@@ -94,7 +100,7 @@ export function create(Computed: ReturnType<typeof createComputed>, Observed: Re
 
 	function defineConnectedProperties(object: Object, propertyDescriptors: PropertyDescriptors, nodeLookup: NodeLookup): void {
 		const propertyInitializers: Array<Function> = [];
-		for (let p in propertyDescriptors) {
+		for (const p in propertyDescriptors) {
 			const propertyDescriptor = propertyDescriptors[p];
 			const { descriptor, initializer } = createComputedInitializer(object, p, propertyDescriptor, nodeLookup);
 			propertyInitializers.push(initializer);
@@ -108,6 +114,15 @@ export function create(Computed: ReturnType<typeof createComputed>, Observed: Re
 			const propertyInitializer = propertyInitializers[i];
 			propertyInitializer();
 		}
+	}
+
+	function defineNodeOnEffect(effect: Object, node: INode<any>) {
+		Object.defineProperty(effect, '_node', {
+			configurable: true,
+			enumerable: true,
+			writable: true,
+			value: node,
+		});
 	}
 
 	function defineNodeLookup(object: Object, nodeLookup: NodeLookup) {
@@ -136,16 +151,13 @@ export function create(Computed: ReturnType<typeof createComputed>, Observed: Re
 				if (propertyDescriptor.get) {
 					node = new Computed(propertyDescriptor.get.bind(object));
 				}
-				else if (typeof propertyDescriptor.value === 'function') {
-					node = new Computed(propertyDescriptor.value.bind(object));
-				}
 				else {
 					node = new Observed(propertyDescriptor.value);
 				}
 				if (configuration.addPropertyNamesToNodes) {
 					defineNodeName(node, name);
 				}
-				if (configuration.addNodeLookupToClass) {
+				if (configuration.addNodeLookup) {
 					nodeLookup[name] = node;
 				}
 				isInitialized = true;
@@ -170,9 +182,12 @@ export function create(Computed: ReturnType<typeof createComputed>, Observed: Re
 	}
 
 	return {
-		configureConnect,
 		connect,
 		connectFactory,
 		connectObject,
+		connectEffect,
+		configureConnect: function(newConfiguration: Partial<Configuration>) {
+			configureConnect(configuration, newConfiguration);
+		},
 	}
 }

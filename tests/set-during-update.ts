@@ -1,6 +1,6 @@
 import test from "ava";
 import { fake } from "./utils/fake";
-import { connect } from "./utils/api";
+import { connect, connectEffect } from "./utils/api";
 
 test(`Setting a value during an update works as expected`, t => {
 	const A = connect(class {
@@ -11,25 +11,13 @@ test(`Setting a value during an update works as expected`, t => {
 		d: number = 0;
 
 		f: number = 0;
-	
-		updateB() {
-			this.b = this.a * 2;
-		}
 
 		get c(): number {
 			return this.b * 3;
 		}
-	
-		updateD() {
-			this.d = this.c * 4;
-		}
 
 		get e(): number {
 			return this.d * 5;
-		}
-	
-		updateF() {
-			this.f = this.e * 6;
 		}
 
 		get g(): number {
@@ -38,6 +26,21 @@ test(`Setting a value during an update works as expected`, t => {
 	});
 
 	const a = new A();
+
+	connectEffect(
+		() => a.a * 2,
+		(result) => a.b = result,
+	);
+
+	connectEffect(
+		() => a.c * 4,
+		(result) => a.d = result,
+	);
+
+	connectEffect(
+		() => a.e * 6,
+		(result) => a.f = result,
+	);
 
 	a.a = -1;
 	t.assert(a.b === -2);
@@ -59,19 +62,23 @@ test(`Setting multiple values by single Computed during an update works efficien
 		c: number = 0;
 
 		d: number = 0;
-	
-		updateBC() {
-			this.b = this.a * 3;
-			this.c = this.a * 4;
-			this.d = this.a * 5;
-		}
-
-		dTest() {
-			dCall(this.c, this.d);
-		}
 	});
 
 	const b = new B();
+
+	connectEffect(
+		() => b.a,
+		(a) => {
+			b.b = a * 3;
+			b.c = a * 4;
+			b.d = a * 5;
+		},
+	);
+
+	connectEffect(
+		() => ({ c: b.c, d: b.d }),
+		(result) => dCall(result.c, result.d),
+	);
 
 	b.a = -3;
 	t.assert(b.d === -15);

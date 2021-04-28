@@ -12,6 +12,7 @@ const {
 	connectFactory,
 	connectObject,
 	configureConnect,
+	connectEffect,
 	updateManager
 } = create();
 
@@ -22,5 +23,6 @@ export {
 	connectFactory,
 	connectObject,
 	configureConnect,
+	connectEffect,
 	updateManager,
 }

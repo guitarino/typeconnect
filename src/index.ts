@@ -7,18 +7,21 @@ import { DependenciesManager } from './DependenciesManager';
 import { NodeCollector } from './NodeCollector';
 import type { IComputed } from './Computed.types';
 import type { IObserved } from './Observed.types';
+import { createConfiguration } from './configuration';
 
 export { CyclicError };
 
 export type { IComputed, IObserved };
 
+const nodeCollector = new NodeCollector();
+const dependenciesManager = new DependenciesManager(nodeCollector);
+const updateManager = new UpdateManager(dependenciesManager, nodeCollector);
+
 export function create() {
-	const nodeCollector = new NodeCollector();
-	const dependenciesManager = new DependenciesManager(nodeCollector);
-	const updateManager = new UpdateManager(dependenciesManager, nodeCollector);
-	const Computed = createComputed(updateManager);
-	const Observed = createObserved(updateManager);
-	const { connect, connectFactory, connectObject, configureConnect } = createAPI(Computed, Observed);
+	const configuration = createConfiguration();
+	const Computed = createComputed(updateManager, configuration);
+	const Observed = createObserved(updateManager, configuration);
+	const { connect, connectFactory, connectObject, configureConnect, connectEffect } = createAPI(configuration, updateManager, Computed, Observed);
 
 	return {
 		Computed,
@@ -27,6 +30,7 @@ export function create() {
 		connectFactory,
 		connectObject,
 		configureConnect,
+		connectEffect,
 		updateManager,
 	}
 }

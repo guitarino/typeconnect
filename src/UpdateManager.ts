@@ -20,6 +20,7 @@ function cancelDefault(id: any) {
 }
 
 export class UpdateManager {
+	private isCollectionPaused: boolean = false;
 	private dependenciesManager: DependenciesManager;
 	private nodeCollector: NodeCollector;
 
@@ -28,14 +29,12 @@ export class UpdateManager {
 
 	private currentUpdateIndex: number = -1;
 
-	public setCallback: null | ((node: INode<any>, newValue: any) => any);
 	public scheduleFunction: (update: () => any) => any;
 	public cancelFunction: (scheduledId: any) => any;
 
 	constructor(dependenciesManager: DependenciesManager, nodeCollector: NodeCollector) {
 		this.dependenciesManager = dependenciesManager;
 		this.nodeCollector = nodeCollector;
-		this.setCallback = null;
 		this.scheduleFunction = scheduleDefault;
 		this.cancelFunction = cancelDefault;
 	}
@@ -50,9 +49,6 @@ export class UpdateManager {
 	}
 
 	public set(node: INode<any>, newValue: any) {
-		if (this.setCallback) {
-			this.setCallback(node, newValue);
-		}
 		if (node.value !== newValue) {
 			node.value = newValue;
 			this.scheduleUpdate(node);
@@ -60,15 +56,24 @@ export class UpdateManager {
 	}
 
 	public get(node: INode<any>) {
-		// If we call .get() during the current update, 
+		// If we call .get() during the current update,
 		// we shouldn't retrigger the update. If we call .get()
 		// outside of the existing update, we need to trigger
 		// the update, since a dependency might have changed.
 		if (this.currentUpdateIndex < 0) {
 			this.triggerUpdate();
 		}
-		this.nodeCollector.collect(node);
+		if (!this.isCollectionPaused) {
+			this.nodeCollector.collect(node);
+		}
 		return node.value;
+	}
+
+	public callWithoutCollect<T>(fn: () => T): T {
+		this.isCollectionPaused = true;
+		const result = fn();
+		this.isCollectionPaused = false;
+		return result;
 	}
 
 	private scheduleUpdate(node: INode<any>) {
@@ -102,6 +107,7 @@ export class UpdateManager {
 			this.scheduledId = null;
 		}
 		// If there's no scheduledUpdates, e.g. during outside ".get()" call,
+		// when nothing was ".set" before ".get" is called,
 		// then triggerUpdate should do nothing
 		if (this.scheduledUpdates.length === 0) {
 			return;
