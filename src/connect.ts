@@ -119,7 +119,7 @@ export function create(configuration: Configuration, updateManager: UpdateManage
 	function defineNodeOnEffect(effect: Object, node: INode<any>) {
 		Object.defineProperty(effect, '_node', {
 			configurable: true,
-			enumerable: true,
+			enumerable: false,
 			writable: true,
 			value: node,
 		});
@@ -128,7 +128,7 @@ export function create(configuration: Configuration, updateManager: UpdateManage
 	function defineNodeLookup(object: Object, nodeLookup: NodeLookup) {
 		Object.defineProperty(object, '_nodeLookup', {
 			configurable: true,
-			enumerable: true,
+			enumerable: false,
 			writable: true,
 			value: nodeLookup
 		});
@@ -137,7 +137,7 @@ export function create(configuration: Configuration, updateManager: UpdateManage
 	function defineNodeName(node: INode<any>, name: string) {
 		Object.defineProperty(node, '_nodeName', {
 			configurable: true,
-			enumerable: true,
+			enumerable: false,
 			writable: true,
 			value: name
 		});
